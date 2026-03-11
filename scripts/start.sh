@@ -17,6 +17,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 # ------------------------------------------------------------------------------
 # Parse command-line arguments (override env.sh defaults)
@@ -99,17 +100,17 @@ echo "============================================"
 # Build
 # ------------------------------------------------------------------------------
 if [ "$BUILD" = true ]; then
-    if [ "$CLEAN" = true ] && [ -d "${SCRIPT_DIR}/${SMITTY_BUILD_DIR}" ]; then
+    if [ "$CLEAN" = true ] && [ -d "${PROJECT_DIR}/${SMITTY_BUILD_DIR}" ]; then
         echo "[build] Cleaning ${SMITTY_BUILD_DIR}..."
-        rm -rf "${SCRIPT_DIR}/${SMITTY_BUILD_DIR}"
+        rm -rf "${PROJECT_DIR}/${SMITTY_BUILD_DIR}"
     fi
 
     echo "[build] Configuring with CMake..."
-    mkdir -p "${SCRIPT_DIR}/${SMITTY_BUILD_DIR}"
-    cmake -S "${SCRIPT_DIR}" -B "${SCRIPT_DIR}/${SMITTY_BUILD_DIR}" -DCMAKE_BUILD_TYPE=Release
+    mkdir -p "${PROJECT_DIR}/${SMITTY_BUILD_DIR}"
+    cmake -S "${PROJECT_DIR}" -B "${PROJECT_DIR}/${SMITTY_BUILD_DIR}" -DCMAKE_BUILD_TYPE=Release
 
     echo "[build] Compiling..."
-    cmake --build "${SCRIPT_DIR}/${SMITTY_BUILD_DIR}" --parallel "$(nproc 2>/dev/null || echo 4)"
+    cmake --build "${PROJECT_DIR}/${SMITTY_BUILD_DIR}" --parallel "$(nproc 2>/dev/null || echo 4)"
 
     echo "[build] Build complete."
 fi
@@ -118,7 +119,7 @@ fi
 # Run
 # ------------------------------------------------------------------------------
 if [ "$RUN" = true ]; then
-    EXEC_PATH="${SCRIPT_DIR}/${SMITTY_BUILD_DIR}/${SMITTY_EXECUTABLE}"
+    EXEC_PATH="${PROJECT_DIR}/${SMITTY_BUILD_DIR}/${SMITTY_EXECUTABLE}"
 
     if [ ! -f "$EXEC_PATH" ]; then
         echo "[error] Executable not found: ${EXEC_PATH}"
