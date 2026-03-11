@@ -64,3 +64,5 @@ target_link_libraries(smitty_services PRIVATE
 )
 
 file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY database DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY scripts DESTINATION ${CMAKE_BINARY_DIR})
