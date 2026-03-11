@@ -103,10 +103,12 @@ void EntityListView::populateTable(const json& data) {
         }
 
         if (!id.empty()) {
-            auto tableRow = table_->rowAt(row);
-            tableRow->clicked().connect([this, id] {
-                if (rowClickCallback_) rowClickCallback_(id);
-            });
+            for (size_t c = 0; c < cols.size(); ++c) {
+                auto cell = table_->elementAt(row, static_cast<int>(c));
+                cell->clicked().connect([this, id] {
+                    if (rowClickCallback_) rowClickCallback_(id);
+                });
+            }
         }
 
         ++row;
