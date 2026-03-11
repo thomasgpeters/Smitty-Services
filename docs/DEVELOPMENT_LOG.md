@@ -140,7 +140,7 @@
 
 **Dashboard Enhancements:**
 - **Unpaid Revenue** card - Sums freight from all unshipped (unpaid) orders, displayed with currency symbol
-- **Outstanding POs** card - Counts products with `units_on_order > 0` (awaiting receipt into inventory)
+- **Pending Orders** card - Counts products with `units_on_order > 0` (awaiting receipt into inventory)
 - **Order Aging** section with three cards:
   - Aging > 1 Week: unshipped orders older than 7 days
   - Aging > 1 Month: unshipped orders older than 30 days

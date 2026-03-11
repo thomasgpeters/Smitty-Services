@@ -36,7 +36,7 @@ The top row displays badge-style stat cards. Each badge shows the **value promin
 | **Orders** | Total number of order records |
 | **Products** | Total number of product records |
 | **Unpaid Revenue** | Total freight value of all unshipped orders |
-| **Outstanding POs** | Number of products with units on order awaiting receipt |
+| **Pending Orders** | Number of products with units on order awaiting receipt |
 
 ### Order Aging
 
@@ -108,7 +108,7 @@ The Product List displays your product catalog including product name, category,
 | **Reorder Level** | Minimum stock level that triggers a reorder |
 | **Discontinued** | Whether the product is no longer being sold |
 
-Products with **On Order > 0** have purchase orders outstanding with suppliers. Until the goods are received and **In Stock** is updated, they appear in the "Outstanding POs" count on the Dashboard and are shown when the **Pending Receipt** filter is active.
+Products with **On Order > 0** have purchase orders outstanding with suppliers. Until the goods are received and **In Stock** is updated, they appear in the "Pending Orders" count on the Dashboard and are shown when the **Pending Receipt** filter is active.
 
 ### Viewing Details
 
