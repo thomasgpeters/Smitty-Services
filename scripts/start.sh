@@ -35,11 +35,6 @@ Options:
   --host HOST          Frontend bind address (default: 0.0.0.0)
   --api-port PORT      Backend API port (default: 5656)
   --api-host HOST      Backend API host (default: localhost)
-  --db-port PORT       Database port (default: 5432)
-  --db-host HOST       Database host (default: localhost)
-  --db-name NAME       Database name (default: smitty_services)
-  --db-user USER       Database user (default: smitty)
-  --db-pass PASS       Database password (default: smitty_secret)
   --docroot PATH       Static resources directory (default: ./resources)
   --build-dir DIR      Build output directory (default: build)
   --build-only         Build without running
@@ -67,11 +62,6 @@ while [[ $# -gt 0 ]]; do
         --host)         export SMITTY_APP_HOST="$2"; shift 2 ;;
         --api-port)     export SMITTY_API_PORT="$2"; shift 2 ;;
         --api-host)     export SMITTY_API_HOST="$2"; shift 2 ;;
-        --db-port)      export SMITTY_DB_PORT="$2"; shift 2 ;;
-        --db-host)      export SMITTY_DB_HOST="$2"; shift 2 ;;
-        --db-name)      export SMITTY_DB_NAME="$2"; shift 2 ;;
-        --db-user)      export SMITTY_DB_USER="$2"; shift 2 ;;
-        --db-pass)      export SMITTY_DB_PASS="$2"; shift 2 ;;
         --docroot)      export SMITTY_DOCROOT="$2"; shift 2 ;;
         --build-dir)    export SMITTY_BUILD_DIR="$2"; shift 2 ;;
         --build-only)   BUILD=true; RUN=false; shift ;;
@@ -93,7 +83,7 @@ echo "  Smitty Services"
 echo "============================================"
 echo "  Frontend:  http://${SMITTY_APP_HOST}:${SMITTY_APP_PORT}"
 echo "  Backend:   ${SMITTY_API_ENDPOINT}"
-echo "  Database:  ${SMITTY_DB_HOST}:${SMITTY_DB_PORT}/${SMITTY_DB_NAME}"
+echo "  Build Dir: ${SMITTY_BUILD_DIR}"
 echo "============================================"
 
 # ------------------------------------------------------------------------------
