@@ -37,10 +37,14 @@ void EntityDetailView::loadRecord(const std::string& id) {
     fieldsContainer_->clear();
 
     try {
-        json response = ApiClient::instance().fetchOne(entity_->resourceName(), id);
-
-        if (response.contains("data")) {
-            populateFields(response["data"]);
+        auto resp = ApiClient::instance().fetchOne(entity_->resourceName(), id);
+        if (!resp.ok()) {
+            fieldsContainer_->addWidget(
+                std::make_unique<Wt::WText>("API error: " + resp.errorMessage(), Wt::TextFormat::Plain));
+            return;
+        }
+        if (resp.hasData()) {
+            populateFields(resp.data());
         }
     } catch (const std::exception& e) {
         fieldsContainer_->addWidget(

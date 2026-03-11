@@ -50,27 +50,33 @@ void Dashboard::buildUI() {
 
 void Dashboard::refresh() {
     try {
-        auto custData = ApiClient::instance().fetchAll("Customer");
-        if (custData.contains("data") && custData["data"].is_array()) {
-            customerCount_->setText(std::to_string(custData["data"].size()));
+        auto custResp = ApiClient::instance().fetchAll("Customer");
+        if (custResp.ok() && custResp.hasData() && custResp.data().is_array()) {
+            customerCount_->setText(std::to_string(custResp.data().size()));
+        } else {
+            customerCount_->setText("N/A");
         }
     } catch (...) {
         customerCount_->setText("N/A");
     }
 
     try {
-        auto orderData = ApiClient::instance().fetchAll("Order");
-        if (orderData.contains("data") && orderData["data"].is_array()) {
-            orderCount_->setText(std::to_string(orderData["data"].size()));
+        auto orderResp = ApiClient::instance().fetchAll("Order");
+        if (orderResp.ok() && orderResp.hasData() && orderResp.data().is_array()) {
+            orderCount_->setText(std::to_string(orderResp.data().size()));
+        } else {
+            orderCount_->setText("N/A");
         }
     } catch (...) {
         orderCount_->setText("N/A");
     }
 
     try {
-        auto prodData = ApiClient::instance().fetchAll("Product");
-        if (prodData.contains("data") && prodData["data"].is_array()) {
-            productCount_->setText(std::to_string(prodData["data"].size()));
+        auto prodResp = ApiClient::instance().fetchAll("Product");
+        if (prodResp.ok() && prodResp.hasData() && prodResp.data().is_array()) {
+            productCount_->setText(std::to_string(prodResp.data().size()));
+        } else {
+            productCount_->setText("N/A");
         }
     } catch (...) {
         productCount_->setText("N/A");
