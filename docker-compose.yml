@@ -17,7 +17,7 @@
 #
 # Port overrides via environment or .env file:
 #   SMITTY_APP_PORT  - Frontend port (default: 8080)
-#   SMITTY_API_PORT  - Backend API port (default: 5656)
+#   SMITTY_API_PORT  - Backend API port (default: 5659)
 #   SMITTY_DB_PORT   - Database port (default: 5432)
 # ==============================================================================
 
@@ -60,9 +60,9 @@ services:
     restart: unless-stopped
     environment:
       APILOGICPROJECT_SQLALCHEMY_DATABASE_URI: "postgresql://${SMITTY_DB_USER:-smitty}:${SMITTY_DB_PASS:-smitty_secret}@database:5432/${SMITTY_DB_NAME:-smitty_services}"
-      APILOGICPROJECT_PORT: "5656"
+      APILOGICPROJECT_PORT: "5659"
     ports:
-      - "${SMITTY_API_PORT:-5656}:5656"
+      - "${SMITTY_API_PORT:-5659}:5659"
     depends_on:
       database:
         condition: service_healthy

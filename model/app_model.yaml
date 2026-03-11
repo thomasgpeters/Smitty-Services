@@ -1031,7 +1031,7 @@ settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8
   style_guide:
-    api_endpoint: http://localhost:5656/api
+    api_endpoint: http://localhost:5659/api
     applicationLocales:
     - en
     - es
