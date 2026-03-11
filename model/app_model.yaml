@@ -1,0 +1,1059 @@
+about:
+  date: March 11, 2026 16:57:01
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+application:
+  app:
+    description: generated Ontimize application
+    menu_group:
+      data:
+        icon: edit_square
+        menu_item:
+          Category:
+            icon: edit_square
+            menu_name: Category
+            menu_title: Category
+            page:
+              detail:
+                columns: category_name,description,picture,category_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Category
+                typescript_name: detail_component.jinja
+                visible_columns: category_name,description,picture,category_id
+              home:
+                columns: category_name,description,picture,category_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Category
+                typescript_name: home_template.jinja
+                visible_columns: category_name,description,picture,category_id
+              new:
+                columns: category_name,description,picture,category_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Category
+                typescript_name: new_component.jinja
+                visible_columns: category_name,description,picture,category_id
+            template_name: module.jinja
+          Customer:
+            icon: edit_square
+            menu_name: Customer
+            menu_title: Customer
+            page:
+              detail:
+                columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,customer_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Customer
+                typescript_name: detail_component.jinja
+                visible_columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,customer_id
+              home:
+                columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,customer_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Customer
+                typescript_name: home_template.jinja
+                visible_columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,customer_id
+              new:
+                columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,customer_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Customer
+                typescript_name: new_component.jinja
+                visible_columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,customer_id
+            template_name: module.jinja
+          CustomerCustomerDemo:
+            icon: edit_square
+            menu_name: CustomerCustomerDemo
+            menu_title: CustomerCustomerDemo
+            page:
+              detail:
+                columns: customer_id,customer_type_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CustomerCustomerDemo
+                typescript_name: detail_component.jinja
+                visible_columns: customer_id,customer_type_id
+              home:
+                columns: customer_id,customer_type_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CustomerCustomerDemo
+                typescript_name: home_template.jinja
+                visible_columns: customer_id,customer_type_id
+              new:
+                columns: customer_id,customer_type_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CustomerCustomerDemo
+                typescript_name: new_component.jinja
+                visible_columns: customer_id,customer_type_id
+            template_name: module.jinja
+          CustomerDemographic:
+            icon: edit_square
+            menu_name: CustomerDemographic
+            menu_title: CustomerDemographic
+            page:
+              detail:
+                columns: customer_type_id,customer_desc
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CustomerDemographic
+                typescript_name: detail_component.jinja
+                visible_columns: customer_type_id,customer_desc
+              home:
+                columns: customer_type_id,customer_desc
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CustomerDemographic
+                typescript_name: home_template.jinja
+                visible_columns: customer_type_id,customer_desc
+              new:
+                columns: customer_type_id,customer_desc
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CustomerDemographic
+                typescript_name: new_component.jinja
+                visible_columns: customer_type_id,customer_desc
+            template_name: module.jinja
+          Employee:
+            icon: edit_square
+            menu_name: Employee
+            menu_title: Employee
+            page:
+              detail:
+                columns: last_name,reports_to,first_name,title,title_of_courtesy,birth_date,hire_date,address,city,region,postal_code,country,home_phone,extension,photo,notes,photo_path,employee_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Employee
+                typescript_name: detail_component.jinja
+                visible_columns: last_name,reports_to,first_name,title,title_of_courtesy,birth_date,hire_date,address,city,region,postal_code,country,home_phone,extension,photo,notes,photo_path,employee_id
+              home:
+                columns: last_name,reports_to,first_name,title,title_of_courtesy,birth_date,hire_date,address,city,region,postal_code,country,home_phone,extension,photo,notes,photo_path,employee_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Employee
+                typescript_name: home_template.jinja
+                visible_columns: last_name,reports_to,first_name,title,title_of_courtesy,birth_date,hire_date,address,city,region,postal_code,country,home_phone,extension,photo,notes,photo_path,employee_id
+              new:
+                columns: last_name,reports_to,first_name,title,title_of_courtesy,birth_date,hire_date,address,city,region,postal_code,country,home_phone,extension,photo,notes,photo_path,employee_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Employee
+                typescript_name: new_component.jinja
+                visible_columns: last_name,reports_to,first_name,title,title_of_courtesy,birth_date,hire_date,address,city,region,postal_code,country,home_phone,extension,photo,notes,photo_path,employee_id
+            template_name: module.jinja
+          EmployeeTerritory:
+            icon: edit_square
+            menu_name: EmployeeTerritory
+            menu_title: EmployeeTerritory
+            page:
+              detail:
+                columns: employee_id,territory_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: EmployeeTerritory
+                typescript_name: detail_component.jinja
+                visible_columns: employee_id,territory_id
+              home:
+                columns: employee_id,territory_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: EmployeeTerritory
+                typescript_name: home_template.jinja
+                visible_columns: employee_id,territory_id
+              new:
+                columns: employee_id,territory_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: EmployeeTerritory
+                typescript_name: new_component.jinja
+                visible_columns: employee_id,territory_id
+            template_name: module.jinja
+          Order:
+            icon: edit_square
+            menu_name: Order
+            menu_title: Order
+            page:
+              detail:
+                columns: ship_name,customer_id,employee_id,ship_via,order_date,required_date,shipped_date,freight,ship_address,ship_city,ship_region,ship_postal_code,ship_country,order_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Order
+                typescript_name: detail_component.jinja
+                visible_columns: ship_name,customer_id,employee_id,ship_via,order_date,required_date,shipped_date,freight,ship_address,ship_city,ship_region,ship_postal_code,ship_country,order_id
+              home:
+                columns: ship_name,customer_id,employee_id,ship_via,order_date,required_date,shipped_date,freight,ship_address,ship_city,ship_region,ship_postal_code,ship_country,order_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Order
+                typescript_name: home_template.jinja
+                visible_columns: ship_name,customer_id,employee_id,ship_via,order_date,required_date,shipped_date,freight,ship_address,ship_city,ship_region,ship_postal_code,ship_country,order_id
+              new:
+                columns: ship_name,customer_id,employee_id,ship_via,order_date,required_date,shipped_date,freight,ship_address,ship_city,ship_region,ship_postal_code,ship_country,order_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Order
+                typescript_name: new_component.jinja
+                visible_columns: ship_name,customer_id,employee_id,ship_via,order_date,required_date,shipped_date,freight,ship_address,ship_city,ship_region,ship_postal_code,ship_country,order_id
+            template_name: module.jinja
+          OrderDetail:
+            icon: edit_square
+            menu_name: OrderDetail
+            menu_title: OrderDetail
+            page:
+              detail:
+                columns: order_id,product_id,unit_price,quantity,discount
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: OrderDetail
+                typescript_name: detail_component.jinja
+                visible_columns: order_id,product_id,unit_price,quantity,discount
+              home:
+                columns: order_id,product_id,unit_price,quantity,discount
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: OrderDetail
+                typescript_name: home_template.jinja
+                visible_columns: order_id,product_id,unit_price,quantity,discount
+              new:
+                columns: order_id,product_id,unit_price,quantity,discount
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: OrderDetail
+                typescript_name: new_component.jinja
+                visible_columns: order_id,product_id,unit_price,quantity,discount
+            template_name: module.jinja
+          Product:
+            icon: edit_square
+            menu_name: Product
+            menu_title: Product
+            page:
+              detail:
+                columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Product
+                typescript_name: detail_component.jinja
+                visible_columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+              home:
+                columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Product
+                typescript_name: home_template.jinja
+                visible_columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+              new:
+                columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Product
+                typescript_name: new_component.jinja
+                visible_columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+            template_name: module.jinja
+          Region:
+            icon: edit_square
+            menu_name: Region
+            menu_title: Region
+            page:
+              detail:
+                columns: region_description,region_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Region
+                typescript_name: detail_component.jinja
+                visible_columns: region_description,region_id
+              home:
+                columns: region_description,region_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Region
+                typescript_name: home_template.jinja
+                visible_columns: region_description,region_id
+              new:
+                columns: region_description,region_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Region
+                typescript_name: new_component.jinja
+                visible_columns: region_description,region_id
+            template_name: module.jinja
+          Shipper:
+            icon: edit_square
+            menu_name: Shipper
+            menu_title: Shipper
+            page:
+              detail:
+                columns: company_name,phone,shipper_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Shipper
+                typescript_name: detail_component.jinja
+                visible_columns: company_name,phone,shipper_id
+              home:
+                columns: company_name,phone,shipper_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Shipper
+                typescript_name: home_template.jinja
+                visible_columns: company_name,phone,shipper_id
+              new:
+                columns: company_name,phone,shipper_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Shipper
+                typescript_name: new_component.jinja
+                visible_columns: company_name,phone,shipper_id
+            template_name: module.jinja
+          Supplier:
+            icon: edit_square
+            menu_name: Supplier
+            menu_title: Supplier
+            page:
+              detail:
+                columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,homepage,supplier_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Supplier
+                typescript_name: detail_component.jinja
+                visible_columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,homepage,supplier_id
+              home:
+                columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,homepage,supplier_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Supplier
+                typescript_name: home_template.jinja
+                visible_columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,homepage,supplier_id
+              new:
+                columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,homepage,supplier_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Supplier
+                typescript_name: new_component.jinja
+                visible_columns: company_name,contact_name,contact_title,address,city,region,postal_code,country,phone,fax,homepage,supplier_id
+            template_name: module.jinja
+          Territory:
+            icon: edit_square
+            menu_name: Territory
+            menu_title: Territory
+            page:
+              detail:
+                columns: territory_description,region_id,territory_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Territory
+                typescript_name: detail_component.jinja
+                visible_columns: territory_description,region_id,territory_id
+              home:
+                columns: territory_description,region_id,territory_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Territory
+                typescript_name: home_template.jinja
+                visible_columns: territory_description,region_id,territory_id
+              new:
+                columns: territory_description,region_id,territory_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Territory
+                typescript_name: new_component.jinja
+                visible_columns: territory_description,region_id,territory_id
+            template_name: module.jinja
+          UsState:
+            icon: edit_square
+            menu_name: UsState
+            menu_title: UsState
+            page:
+              detail:
+                columns: state_name,state_abbr,state_region,state_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: UsState
+                typescript_name: detail_component.jinja
+                visible_columns: state_name,state_abbr,state_region,state_id
+              home:
+                columns: state_name,state_abbr,state_region,state_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: UsState
+                typescript_name: home_template.jinja
+                visible_columns: state_name,state_abbr,state_region,state_id
+              new:
+                columns: state_name,state_abbr,state_region,state_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: UsState
+                typescript_name: new_component.jinja
+                visible_columns: state_name,state_abbr,state_region,state_id
+            template_name: module.jinja
+        menu_name: data
+        menu_title: data
+        opened: true
+    name: app
+authentication: '{system-default}'
+entities:
+  Category:
+    columns:
+    - label: ' category_name*'
+      name: category_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: description
+      template: text
+      type: TEXT
+    - name: picture
+      template: textarea
+      type: BLOB
+    - name: category_id
+      template: integer
+      type: SMALLINT
+    favorite: category_name
+    hidden: {}
+    label: Category
+    primary_key:
+    - category_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - category_id
+      name: ProductList
+      resource: Product
+    type: Category
+  Customer:
+    columns:
+    - label: ' company_name*'
+      name: company_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: contact_name
+      template: text
+      type: VARCHAR
+    - name: contact_title
+      template: text
+      type: VARCHAR
+    - name: address
+      template: text
+      type: VARCHAR
+    - name: city
+      template: text
+      type: VARCHAR
+    - name: region
+      template: text
+      type: VARCHAR
+    - name: postal_code
+      template: text
+      type: VARCHAR
+    - name: country
+      template: text
+      type: VARCHAR
+    - name: phone
+      template: text
+      type: VARCHAR
+    - name: fax
+      template: text
+      type: VARCHAR
+    - name: customer_id
+      required: true
+      template: text
+      type: VARCHAR
+    favorite: company_name
+    hidden: {}
+    label: Customer
+    primary_key:
+    - customer_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: CustomerCustomerDemoList
+      resource: CustomerCustomerDemo
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    type: Customer
+  CustomerCustomerDemo:
+    columns:
+    - label: ' customer_id*'
+      name: customer_id
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: customer_type_id
+      required: true
+      template: text
+      type: VARCHAR
+    favorite: customer_id
+    hidden: {}
+    label: CustomerCustomerDemo
+    primary_key:
+    - customer_id
+    - customer_type_id
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - customer_type_id
+      name: customer_type
+      resource: CustomerDemographic
+    type: CustomerCustomerDemo
+  CustomerDemographic:
+    columns:
+    - label: ' customer_type_id*'
+      name: customer_type_id
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: customer_desc
+      template: text
+      type: TEXT
+    favorite: customer_type_id
+    hidden: {}
+    label: CustomerDemographic
+    primary_key:
+    - customer_type_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_type_id
+      name: CustomerCustomerDemoList
+      resource: CustomerCustomerDemo
+    type: CustomerDemographic
+  Employee:
+    columns:
+    - label: ' last_name*'
+      name: last_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: reports_to
+      template: integer
+      type: SMALLINT
+    - name: first_name
+      required: true
+      template: text
+      type: VARCHAR
+    - name: title
+      template: text
+      type: VARCHAR
+    - name: title_of_courtesy
+      template: text
+      type: VARCHAR
+    - name: birth_date
+      type: DATE
+    - name: hire_date
+      type: DATE
+    - name: address
+      template: text
+      type: VARCHAR
+    - name: city
+      template: text
+      type: VARCHAR
+    - name: region
+      template: text
+      type: VARCHAR
+    - name: postal_code
+      template: text
+      type: VARCHAR
+    - name: country
+      template: text
+      type: VARCHAR
+    - name: home_phone
+      template: text
+      type: VARCHAR
+    - name: extension
+      template: text
+      type: VARCHAR
+    - name: photo
+      template: textarea
+      type: BLOB
+    - name: notes
+      template: text
+      type: TEXT
+    - name: photo_path
+      template: text
+      type: VARCHAR
+    - name: employee_id
+      template: integer
+      type: SMALLINT
+    favorite: last_name
+    hidden: {}
+    label: Employee
+    primary_key:
+    - employee_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - reports_to
+      name: EmployeeList
+      resource: Employee
+    - direction: tomany
+      fks:
+      - employee_id
+      name: EmployeeTerritoryList
+      resource: EmployeeTerritory
+    - direction: tomany
+      fks:
+      - employee_id
+      name: OrderList
+      resource: Order
+    - direction: toone
+      fks:
+      - reports_to
+      name: Employee
+      resource: Employee
+    type: Employee
+  EmployeeTerritory:
+    columns:
+    - label: ' employee_id*'
+      name: employee_id
+      search: true
+      sort: true
+      template: integer
+      type: SMALLINT
+    - name: territory_id
+      required: true
+      template: text
+      type: VARCHAR
+    favorite: employee_id
+    hidden: {}
+    label: EmployeeTerritory
+    primary_key:
+    - employee_id
+    - territory_id
+    tab_groups:
+    - direction: toone
+      fks:
+      - employee_id
+      name: employee
+      resource: Employee
+    - direction: toone
+      fks:
+      - territory_id
+      name: territory
+      resource: Territory
+    type: EmployeeTerritory
+  Order:
+    columns:
+    - label: ' ship_name*'
+      name: ship_name
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: customer_id
+      template: text
+      type: VARCHAR
+    - name: employee_id
+      template: integer
+      type: SMALLINT
+    - name: ship_via
+      template: integer
+      type: SMALLINT
+    - name: order_date
+      type: DATE
+    - name: required_date
+      type: DATE
+    - name: shipped_date
+      type: DATE
+    - name: freight
+      template: real
+      type: FLOAT
+    - name: ship_address
+      template: text
+      type: VARCHAR
+    - name: ship_city
+      template: text
+      type: VARCHAR
+    - name: ship_region
+      template: text
+      type: VARCHAR
+    - name: ship_postal_code
+      template: text
+      type: VARCHAR
+    - name: ship_country
+      template: text
+      type: VARCHAR
+    - name: order_id
+      template: integer
+      type: SMALLINT
+    favorite: ship_name
+    hidden: {}
+    label: Order
+    primary_key:
+    - order_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: OrderDetailList
+      resource: OrderDetail
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - employee_id
+      name: employee
+      resource: Employee
+    - direction: toone
+      fks:
+      - ship_via
+      name: shipper
+      resource: Shipper
+    type: Order
+  OrderDetail:
+    columns:
+    - label: ' order_id*'
+      name: order_id
+      search: true
+      sort: true
+      template: integer
+      type: SMALLINT
+    - name: product_id
+      template: integer
+      type: SMALLINT
+    - name: unit_price
+      required: true
+      template: real
+      type: FLOAT
+    - name: quantity
+      required: true
+      template: integer
+      type: SMALLINT
+    - name: discount
+      required: true
+      template: real
+      type: FLOAT
+    favorite: order_id
+    hidden: {}
+    label: OrderDetail
+    primary_key:
+    - order_id
+    - product_id
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: OrderDetail
+  Product:
+    columns:
+    - label: ' product_name*'
+      name: product_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: category_id
+      template: integer
+      type: SMALLINT
+    - name: supplier_id
+      template: integer
+      type: SMALLINT
+    - name: quantity_per_unit
+      template: text
+      type: VARCHAR
+    - name: unit_price
+      template: real
+      type: FLOAT
+    - name: units_in_stock
+      template: integer
+      type: SMALLINT
+    - name: units_on_order
+      template: integer
+      type: SMALLINT
+    - name: reorder_level
+      template: integer
+      type: SMALLINT
+    - name: product_id
+      template: integer
+      type: SMALLINT
+    - name: discontinued
+      required: true
+      template: integer
+      type: INTEGER
+    favorite: product_name
+    hidden: {}
+    label: Product
+    primary_key:
+    - product_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: OrderDetailList
+      resource: OrderDetail
+    - direction: toone
+      fks:
+      - category_id
+      name: category
+      resource: Category
+    - direction: toone
+      fks:
+      - supplier_id
+      name: supplier
+      resource: Supplier
+    type: Product
+  Region:
+    columns:
+    - label: ' region_description*'
+      name: region_description
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: region_id
+      template: integer
+      type: SMALLINT
+    favorite: region_description
+    hidden: {}
+    label: Region
+    primary_key:
+    - region_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - region_id
+      name: TerritoryList
+      resource: Territory
+    type: Region
+  Shipper:
+    columns:
+    - label: ' company_name*'
+      name: company_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: phone
+      template: text
+      type: VARCHAR
+    - name: shipper_id
+      template: integer
+      type: SMALLINT
+    favorite: company_name
+    hidden: {}
+    label: Shipper
+    primary_key:
+    - shipper_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ship_via
+      name: OrderList
+      resource: Order
+    type: Shipper
+  Supplier:
+    columns:
+    - label: ' company_name*'
+      name: company_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: contact_name
+      template: text
+      type: VARCHAR
+    - name: contact_title
+      template: text
+      type: VARCHAR
+    - name: address
+      template: text
+      type: VARCHAR
+    - name: city
+      template: text
+      type: VARCHAR
+    - name: region
+      template: text
+      type: VARCHAR
+    - name: postal_code
+      template: text
+      type: VARCHAR
+    - name: country
+      template: text
+      type: VARCHAR
+    - name: phone
+      template: text
+      type: VARCHAR
+    - name: fax
+      template: text
+      type: VARCHAR
+    - name: homepage
+      template: text
+      type: TEXT
+    - name: supplier_id
+      template: integer
+      type: SMALLINT
+    favorite: company_name
+    hidden: {}
+    label: Supplier
+    primary_key:
+    - supplier_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - supplier_id
+      name: ProductList
+      resource: Product
+    type: Supplier
+  Territory:
+    columns:
+    - label: ' territory_description*'
+      name: territory_description
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: region_id
+      required: true
+      template: integer
+      type: SMALLINT
+    - name: territory_id
+      required: true
+      template: text
+      type: VARCHAR
+    favorite: territory_description
+    hidden: {}
+    label: Territory
+    primary_key:
+    - territory_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - territory_id
+      name: EmployeeTerritoryList
+      resource: EmployeeTerritory
+    - direction: toone
+      fks:
+      - region_id
+      name: region
+      resource: Region
+    type: Territory
+  UsState:
+    columns:
+    - label: ' state_name*'
+      name: state_name
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: state_abbr
+      template: text
+      type: VARCHAR
+    - name: state_region
+      template: text
+      type: VARCHAR
+    - name: state_id
+      template: integer
+      type: SMALLINT
+    favorite: state_name
+    hidden: {}
+    label: UsState
+    primary_key:
+    - state_id
+    type: UsState
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    api_endpoint: http://localhost:5656/api
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: YYYY-MM-DD
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: false
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    mode: tab
+    pick_style: list
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: false
