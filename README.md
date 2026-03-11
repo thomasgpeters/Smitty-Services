@@ -61,7 +61,7 @@ make
 
 Then open `http://localhost:8080` in your browser.
 
-The application expects the ApiLogicServer backend running at `http://localhost:5656/api` (configurable in Settings).
+The application expects the ApiLogicServer backend running at `http://localhost:5659/api` (configurable in Settings).
 
 ## Project Structure
 
@@ -123,5 +123,12 @@ Smitty-Services/
 
 ## Documentation
 
-- [Development Log](DEVELOPMENT_LOG.md) -- Chronological record of development activity
-- [Design Decisions](DESIGN_DECISIONS.md) -- Architectural decisions and rationale
+- [User's Guide](docs/USERS_GUIDE.md) -- Customer-facing application guide
+- [Development Log](docs/DEVELOPMENT_LOG.md) -- Chronological record of development activity
+- [Design Decisions](docs/DESIGN_DECISIONS.md) -- Architectural decisions and rationale
+
+**User's Guide** -- A complete walkthrough of the application for end users. Covers the Dashboard with its summary cards and order aging analysis, how to use list filters (text search and checkbox filters for outstanding balances, unpaid orders, and pending receipts), the Settings page for configuring the API endpoint, date format, and currency, and general tips for day-to-day use.
+
+**Development Log** -- A chronological journal of all development activity on the project. Each entry documents what was built, why, and what files were created or modified. Useful for onboarding new developers, understanding the evolution of the codebase, and tracing when specific features were introduced.
+
+**Design Decisions** -- A numbered catalog of architectural and technical decisions (DD-001 through DD-016). Each entry captures the decision, the rationale behind it, alternatives considered, and trade-offs accepted. Topics include the choice of C++ with Wt, the modular entity architecture, JSONAPI protocol, PDF generation strategy, client-side filtering approach, and the unpaid order detection model.

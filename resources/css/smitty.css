@@ -398,6 +398,38 @@ body {
     border-left-color: #ffa726;
 }
 
+.dash-card.unpaid-revenue {
+    border-left-color: #ef5350;
+}
+
+.dash-card.outstanding-po {
+    border-left-color: #ab47bc;
+}
+
+.dash-card.aging-week {
+    border-left-color: #ffca28;
+}
+
+.dash-card.aging-month {
+    border-left-color: #ff7043;
+}
+
+.dash-card.aging-quarter {
+    border-left-color: #e53935;
+}
+
+/* ===== FILTER CHECKBOX ===== */
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #3c4043;
+    cursor: pointer;
+    white-space: nowrap;
+    padding-left: 8px;
+}
+
 /* ===== SETTINGS ===== */
 .settings-section {
     max-width: 640px;
