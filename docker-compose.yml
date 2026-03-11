@@ -1,0 +1,99 @@
+# ==============================================================================
+# Smitty Services - Docker Compose (All Three Tiers)
+# ==============================================================================
+# Tier 1: PostgreSQL Database
+# Tier 2: ApiLogicServer Backend API (middleware)
+# Tier 3: Smitty Services Frontend (C++ Wt application)
+#
+# The database and API server are existing services referenced here.
+# Only the frontend is built from this repository.
+#
+# Usage:
+#   docker compose up -d                         # Start all tiers (defaults)
+#   docker compose up -d --build                 # Rebuild frontend and start
+#   SMITTY_APP_PORT=9090 docker compose up -d    # Custom frontend port
+#   docker compose down                          # Stop all tiers
+#   docker compose logs -f frontend              # Follow frontend logs
+#
+# Port overrides via environment or .env file:
+#   SMITTY_APP_PORT  - Frontend port (default: 8080)
+#   SMITTY_API_PORT  - Backend API port (default: 5656)
+#   SMITTY_DB_PORT   - Database port (default: 5432)
+# ==============================================================================
+
+services:
+  # --------------------------------------------------------------------------
+  # Tier 1: PostgreSQL Database
+  # --------------------------------------------------------------------------
+  database:
+    image: postgres:16-alpine
+    container_name: smitty-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${SMITTY_DB_NAME:-smitty_services}
+      POSTGRES_USER: ${SMITTY_DB_USER:-smitty}
+      POSTGRES_PASSWORD: ${SMITTY_DB_PASS:-smitty_secret}
+    ports:
+      - "${SMITTY_DB_PORT:-5432}:5432"
+    volumes:
+      - smitty-db-data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed_data.sql:/docker-entrypoint-initdb.d/02-seed_data.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SMITTY_DB_USER:-smitty} -d ${SMITTY_DB_NAME:-smitty_services}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smitty-network
+
+  # --------------------------------------------------------------------------
+  # Tier 2: ApiLogicServer Backend API (middleware)
+  # --------------------------------------------------------------------------
+  # The ApiLogicServer is an existing service. Configure its image or build
+  # context below to match your deployment. By default, it expects a pre-built
+  # image. Update the image tag or replace with a build context as needed.
+  # --------------------------------------------------------------------------
+  api-server:
+    image: ${SMITTY_API_IMAGE:-apilogicserver/api_logic_server:latest}
+    container_name: smitty-api-server
+    restart: unless-stopped
+    environment:
+      APILOGICPROJECT_SQLALCHEMY_DATABASE_URI: "postgresql://${SMITTY_DB_USER:-smitty}:${SMITTY_DB_PASS:-smitty_secret}@database:5432/${SMITTY_DB_NAME:-smitty_services}"
+      APILOGICPROJECT_PORT: "5656"
+    ports:
+      - "${SMITTY_API_PORT:-5656}:5656"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - smitty-network
+
+  # --------------------------------------------------------------------------
+  # Tier 3: Smitty Services Frontend (C++ Wt Application)
+  # --------------------------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: smitty-frontend
+    restart: unless-stopped
+    command:
+      - "--docroot"
+      - "resources"
+      - "--http-listen"
+      - "0.0.0.0:8080"
+    ports:
+      - "${SMITTY_APP_PORT:-8080}:8080"
+    depends_on:
+      - api-server
+    networks:
+      - smitty-network
+
+volumes:
+  smitty-db-data:
+    driver: local
+
+networks:
+  smitty-network:
+    driver: bridge
