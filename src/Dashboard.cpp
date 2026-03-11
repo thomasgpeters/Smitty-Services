@@ -112,7 +112,7 @@ static time_t parseDate(const std::string& dateStr) {
 }
 
 void Dashboard::refresh() {
-    auto& currency = AppSettings::instance().currencySymbol();
+    const auto& currency = AppSettings::instance().currencySymbol();
 
     // --- Customers ---
     try {
