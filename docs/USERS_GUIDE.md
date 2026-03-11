@@ -28,7 +28,7 @@ The Dashboard provides a real-time summary of your business data.
 
 ### Summary Cards
 
-The top row of cards shows key counts:
+The top row displays badge-style stat cards. Each badge shows the **value prominently on top** with the **label underneath**, so you read them naturally -- for example, "91 Customers" or "$4,230.50 Unpaid Revenue."
 
 | Card | Description |
 |------|-------------|
@@ -40,15 +40,15 @@ The top row of cards shows key counts:
 
 ### Order Aging
 
-Below the summary cards, the Order Aging section breaks down unshipped orders by how long they have been open:
+Below the summary cards, the Order Aging section breaks down unshipped orders by how long they have been open. Cards are ordered from the longest aging period to the shortest, so the most critical items appear first:
 
 | Card | Description |
 |------|-------------|
-| **Aging > 1 Week** | Unshipped orders placed more than 7 days ago |
-| **Aging > 1 Month** | Unshipped orders placed more than 30 days ago |
 | **Aging > 1 Quarter** | Unshipped orders placed more than 90 days ago |
+| **Aging > 1 Month** | Unshipped orders placed more than 30 days ago (but less than 90) |
+| **Aging > 1 Week** | Unshipped orders placed more than 7 days ago (but less than 30) |
 
-These aging buckets help you identify overdue orders that may need attention. Orders in the "1 Quarter" bucket are the most critical.
+These aging buckets are **exclusive** -- each unpaid order falls into exactly one bucket based on its age. The counts do not overlap. For example, an order that is 45 days old appears only in "Aging > 1 Month," not also in "Aging > 1 Week." This gives you an accurate breakdown of where overdue orders stand.
 
 Click **Refresh** to reload all dashboard data from the server.
 

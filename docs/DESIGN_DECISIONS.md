@@ -142,9 +142,9 @@
 
 ## DD-015: Order Aging Buckets
 
-**Decision:** Define three aging tiers based on `order_date` age relative to the current date: >7 days (1 week), >30 days (1 month), >90 days (1 quarter).
+**Decision:** Define three aging tiers based on `order_date` age relative to the current date: >7 days (1 week), >30 days (1 month), >90 days (1 quarter). Display in descending order: quarter, month, week.
 
-**Rationale:** These are standard accounts-receivable aging buckets used in business accounting. Each unpaid order falls into exactly one bucket (the most recent applicable tier), giving a quick visual breakdown of how stale outstanding orders are. The dashboard displays counts per tier with color-coded cards (yellow for week, orange for month, red for quarter) to draw attention to older items.
+**Rationale:** These are standard accounts-receivable aging buckets used in business accounting. Each unpaid order falls into exactly one bucket (exclusive, not cumulative), giving a quick visual breakdown of how stale outstanding orders are. The dashboard displays counts per tier with color-coded badge cards (red for quarter, orange for month, yellow for week) ordered from longest to shortest aging period so the most critical items appear first.
 
 ---
 
@@ -155,6 +155,18 @@
 **Rationale:** The JSONAPI backend serves each entity independently -- there is no "customers with unpaid orders" endpoint. Rather than adding custom server endpoints, we perform a second API call to fetch orders, extract the `customer_id` from unshipped orders, and use `filterRecord()` to include only matching customers. This keeps the backend generic and the logic in the frontend where it's visible and modifiable.
 
 **Trade-offs:** Requires an extra API call when the checkbox is toggled. For the current dataset size this is negligible. The order data is not cached across checkbox toggles to ensure freshness.
+
+---
+
+## DD-017: Badge-Style Dashboard Cards with Value-First Layout
+
+**Decision:** Style dashboard stat cards as compact, centered badges with the numeric value displayed above the label, a colored top-border accent, and balanced padding.
+
+**Rationale:** Placing the value above the title creates a natural top-to-bottom reading order -- "91 Customers" rather than "Customers: 91." This matches how users mentally process dashboard metrics: the number catches the eye first, and the label provides context. The compact badge shape (as opposed to wide cards with left-border accents) uses horizontal space more efficiently, allowing all summary cards to be visible without scrolling. The colored top border provides category-at-a-glance identification while keeping the card interior clean.
+
+**Alternatives Considered:**
+- Title-above-value (original layout): Less scannable; the eye has to read the label before finding the number
+- Wide cards with left-border accent: Wastes horizontal space, forces scrolling on narrower viewports
 
 ---
 
