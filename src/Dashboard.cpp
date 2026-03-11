@@ -60,7 +60,7 @@ void Dashboard::buildUI() {
     poCard->setStyleClass("dash-card outstanding-po");
     outstandingPOValue_ = poCard->addWidget(std::make_unique<Wt::WText>("--"));
     outstandingPOValue_->setStyleClass("dash-card-value");
-    poCard->addWidget(std::make_unique<Wt::WText>("Outstanding POs"))->setStyleClass("dash-card-title");
+    poCard->addWidget(std::make_unique<Wt::WText>("Pending Orders"))->setStyleClass("dash-card-title");
 
     // Aging section header
     auto agingHeader = addWidget(std::make_unique<Wt::WContainerWidget>());
