@@ -14,6 +14,7 @@ The application is designed for incremental feature adoption -- new entities, wo
 - **Backend API:** ApiLogicServer (JSONAPI specification)
 - **Build System:** CMake 3.16+
 - **HTTP Client:** libcurl
+- **PDF Generation:** PDFGen (single-file C library, zero dependencies)
 
 ### Modular Design
 
@@ -27,7 +28,8 @@ SmittyApplication          -- Main app shell (navbar, sidebar, footer, routing)
   |-- EntityDetailView     -- Reusable detail widget with field rendering
   |-- ApiClient            -- JSONAPI HTTP client (libcurl)
   |-- Auth                 -- Authentication & session management
-  +-- AppSettings          -- Application-wide configuration
+  |-- AppSettings          -- Application-wide configuration
+  +-- PdfReport            -- PDF generation (OrderReport, CustomerStatement, RevenueReport)
 ```
 
 **Adding a new entity** requires only:
@@ -82,7 +84,12 @@ Smitty-Services/
 |   |-- SideBar.h               # Sidebar navigation widget
 |   |-- Footer.h                # Footer widget
 |   |-- Dashboard.h             # Dashboard page
-|   +-- SettingsView.h          # Settings page
+|   |-- SettingsView.h          # Settings page
+|   |-- pdfgen.h                # PDFGen library (public domain)
+|   |-- PdfReport.h             # Base report class
+|   |-- OrderReport.h           # Order invoice & PO reports
+|   |-- CustomerStatementReport.h # Monthly customer statements
+|   +-- RevenueReport.h         # Revenue tracking reports
 |-- src/
 |   |-- main.cpp                # Entry point
 |   |-- SmittyApplication.cpp   # App shell & routing
@@ -103,7 +110,12 @@ Smitty-Services/
 |   |-- OrderDetail.cpp         # Order detail page
 |   |-- ProductList.cpp         # Product list page
 |   |-- ProductDetail.cpp       # Product detail page
-|   +-- Settings.cpp            # Settings page
+|   |-- Settings.cpp            # Settings page
+|   |-- pdfgen.c                # PDFGen library source
+|   |-- PdfReport.cpp           # Base report implementation
+|   |-- OrderReport.cpp         # Order/PO report generation
+|   |-- CustomerStatementReport.cpp # Statement generation
+|   +-- RevenueReport.cpp       # Revenue report generation
 +-- resources/
     +-- css/
         +-- smitty.css          # Application stylesheet

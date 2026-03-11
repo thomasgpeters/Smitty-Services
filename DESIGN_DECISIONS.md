@@ -76,4 +76,26 @@
 
 ---
 
+## DD-009: PDFGen for PDF Generation
+
+**Decision:** Use PDFGen (single .c/.h file, public domain) for all PDF report generation.
+
+**Rationale:** PDFGen is the lightest possible PDF library -- a single C source file with zero external dependencies. It provides the drawing primitives needed for business documents (text, lines, rectangles, images) while keeping the build simple. The `PdfReport` base class wraps PDFGen's C API in a C++ class hierarchy with reusable table layout, page break management, and branding.
+
+**Alternatives Considered:**
+- libHaru: More features but adds zlib/libpng dependencies
+- PDF-Writer (PDFHummus): Full-featured but heavy (FreeType, zlib, libpng, libjpeg, libtiff)
+
+**Trade-offs:** PDFGen has no advanced typography or embedded font support beyond the 14 standard PDF fonts. For business documents (invoices, statements, reports), this is sufficient. If rich formatting is needed later, the `PdfReport` base class can be re-targeted to a different backend without changing the report subclasses.
+
+---
+
+## DD-010: Report Class Hierarchy
+
+**Decision:** Create a `PdfReport` abstract base class with virtual `generateContent()`, with concrete subclasses for each report type (OrderReport, CustomerStatementReport, RevenueReport).
+
+**Rationale:** All reports share common structure: page header with company branding, page footer with page numbers, table rendering, currency formatting, and automatic page breaks. The base class encapsulates these patterns while subclasses focus only on their specific data layout. Adding a new report type requires only inheriting from `PdfReport` and implementing `generateContent()`.
+
+---
+
 *Future design decisions will be appended as features are added.*
