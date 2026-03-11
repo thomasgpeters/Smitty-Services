@@ -65,6 +65,7 @@ void EntityListView::refresh() {
         json data = ApiClient::instance().fetchAll(entity_->resourceName(), currentFilter_);
         populateTable(data);
     } catch (const std::exception& e) {
+        statusText_->setTextFormat(Wt::TextFormat::Plain);
         statusText_->setText(std::string("Error loading data: ") + e.what());
     }
 }
@@ -92,8 +93,9 @@ void EntityListView::populateTable(const json& data) {
         for (size_t c = 0; c < cols.size(); ++c) {
             std::string val = entity_->getFieldValue(record, cols[c].name);
             std::string formatted = formatCellValue(cols[c], val);
+            auto text = std::make_unique<Wt::WText>(formatted, Wt::TextFormat::Plain);
             table_->elementAt(row, static_cast<int>(c))
-                  ->addWidget(std::make_unique<Wt::WText>(formatted));
+                  ->addWidget(std::move(text));
         }
 
         // Click handler for row

@@ -3,6 +3,7 @@
 #include <curl/curl.h>
 #include <stdexcept>
 #include <sstream>
+#include <cstdlib>
 
 static size_t writeCallback(void* contents, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
@@ -15,8 +16,9 @@ ApiClient& ApiClient::instance() {
     return client;
 }
 
-ApiClient::ApiClient()
-    : baseUrl_("http://localhost:5656/api") {
+ApiClient::ApiClient() {
+    const char* envUrl = std::getenv("SMITTY_API_ENDPOINT");
+    baseUrl_ = envUrl ? std::string(envUrl) : "http://localhost:5656/api";
 }
 
 void ApiClient::setBaseUrl(const std::string& url) {

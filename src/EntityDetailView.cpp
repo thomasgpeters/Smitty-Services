@@ -44,7 +44,7 @@ void EntityDetailView::loadRecord(const std::string& id) {
         }
     } catch (const std::exception& e) {
         fieldsContainer_->addWidget(
-            std::make_unique<Wt::WText>(std::string("Error loading record: ") + e.what()));
+            std::make_unique<Wt::WText>(std::string("Error loading record: ") + e.what(), Wt::TextFormat::Plain));
     }
 }
 
@@ -59,7 +59,7 @@ void EntityDetailView::populateFields(const json& record) {
         std::string val = entity_->getFieldValue(record, col.name);
         std::string formatted = formatFieldValue(col, val);
 
-        auto value = group->addWidget(std::make_unique<Wt::WText>(formatted));
+        auto value = group->addWidget(std::make_unique<Wt::WText>(formatted, Wt::TextFormat::Plain));
         value->setStyleClass("form-value");
     }
 }
