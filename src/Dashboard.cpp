@@ -30,37 +30,37 @@ void Dashboard::buildUI() {
     // Customer card
     auto custCard = cards->addWidget(std::make_unique<Wt::WContainerWidget>());
     custCard->setStyleClass("dash-card customers");
-    custCard->addWidget(std::make_unique<Wt::WText>("Customers"))->setStyleClass("dash-card-title");
     customerCount_ = custCard->addWidget(std::make_unique<Wt::WText>("--"));
     customerCount_->setStyleClass("dash-card-value");
+    custCard->addWidget(std::make_unique<Wt::WText>("Customers"))->setStyleClass("dash-card-title");
 
     // Order card
     auto orderCard = cards->addWidget(std::make_unique<Wt::WContainerWidget>());
     orderCard->setStyleClass("dash-card orders");
-    orderCard->addWidget(std::make_unique<Wt::WText>("Orders"))->setStyleClass("dash-card-title");
     orderCount_ = orderCard->addWidget(std::make_unique<Wt::WText>("--"));
     orderCount_->setStyleClass("dash-card-value");
+    orderCard->addWidget(std::make_unique<Wt::WText>("Orders"))->setStyleClass("dash-card-title");
 
     // Product card
     auto prodCard = cards->addWidget(std::make_unique<Wt::WContainerWidget>());
     prodCard->setStyleClass("dash-card products");
-    prodCard->addWidget(std::make_unique<Wt::WText>("Products"))->setStyleClass("dash-card-title");
     productCount_ = prodCard->addWidget(std::make_unique<Wt::WText>("--"));
     productCount_->setStyleClass("dash-card-value");
+    prodCard->addWidget(std::make_unique<Wt::WText>("Products"))->setStyleClass("dash-card-title");
 
     // Unpaid Revenue card
     auto unpaidCard = cards->addWidget(std::make_unique<Wt::WContainerWidget>());
     unpaidCard->setStyleClass("dash-card unpaid-revenue");
-    unpaidCard->addWidget(std::make_unique<Wt::WText>("Unpaid Revenue"))->setStyleClass("dash-card-title");
     unpaidRevenueValue_ = unpaidCard->addWidget(std::make_unique<Wt::WText>("--"));
     unpaidRevenueValue_->setStyleClass("dash-card-value");
+    unpaidCard->addWidget(std::make_unique<Wt::WText>("Unpaid Revenue"))->setStyleClass("dash-card-title");
 
     // Outstanding Purchase Orders card
     auto poCard = cards->addWidget(std::make_unique<Wt::WContainerWidget>());
     poCard->setStyleClass("dash-card outstanding-po");
-    poCard->addWidget(std::make_unique<Wt::WText>("Outstanding POs"))->setStyleClass("dash-card-title");
     outstandingPOValue_ = poCard->addWidget(std::make_unique<Wt::WText>("--"));
     outstandingPOValue_->setStyleClass("dash-card-value");
+    poCard->addWidget(std::make_unique<Wt::WText>("Outstanding POs"))->setStyleClass("dash-card-title");
 
     // Aging section header
     auto agingHeader = addWidget(std::make_unique<Wt::WContainerWidget>());
@@ -73,23 +73,23 @@ void Dashboard::buildUI() {
     // Aging: 1 week
     auto weekCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
     weekCard->setStyleClass("dash-card aging-week");
-    weekCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Week"))->setStyleClass("dash-card-title");
     agingWeekValue_ = weekCard->addWidget(std::make_unique<Wt::WText>("--"));
     agingWeekValue_->setStyleClass("dash-card-value");
+    weekCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Week"))->setStyleClass("dash-card-title");
 
     // Aging: 1 month
     auto monthCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
     monthCard->setStyleClass("dash-card aging-month");
-    monthCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Month"))->setStyleClass("dash-card-title");
     agingMonthValue_ = monthCard->addWidget(std::make_unique<Wt::WText>("--"));
     agingMonthValue_->setStyleClass("dash-card-value");
+    monthCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Month"))->setStyleClass("dash-card-title");
 
     // Aging: 1 quarter
     auto quarterCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
     quarterCard->setStyleClass("dash-card aging-quarter");
-    quarterCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Quarter"))->setStyleClass("dash-card-title");
     agingQuarterValue_ = quarterCard->addWidget(std::make_unique<Wt::WText>("--"));
     agingQuarterValue_->setStyleClass("dash-card-value");
+    quarterCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Quarter"))->setStyleClass("dash-card-title");
 
     // Refresh button
     auto refreshBtn = addWidget(std::make_unique<Wt::WPushButton>("Refresh"));
