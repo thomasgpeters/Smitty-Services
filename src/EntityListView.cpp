@@ -38,6 +38,9 @@ void EntityListView::buildUI() {
     clearBtn->setStyleClass("clear-btn");
     clearBtn->clicked().connect(this, &EntityListView::clearFilter);
 
+    // Allow subclasses to add custom filter widgets
+    addCustomFilters(filterBar);
+
     // Status text
     statusText_ = addWidget(std::make_unique<Wt::WText>());
 
@@ -47,6 +50,15 @@ void EntityListView::buildUI() {
     table_->setHeaderCount(1);
 
     refresh();
+}
+
+void EntityListView::addCustomFilters(Wt::WContainerWidget* /*filterBar*/) {
+    // Default: no custom filters. Subclasses override this.
+}
+
+bool EntityListView::filterRecord(const json& /*record*/) const {
+    // Default: include all records.
+    return true;
 }
 
 void EntityListView::applyFilter() {
@@ -95,6 +107,9 @@ void EntityListView::populateTable(const json& data) {
     const auto& records = data["data"];
     int row = 1;
     for (const auto& record : records) {
+        // Apply client-side filter from subclass
+        if (!filterRecord(record)) continue;
+
         for (size_t c = 0; c < cols.size(); ++c) {
             std::string val = entity_->getFieldValue(record, cols[c].name);
             std::string formatted = formatCellValue(cols[c], val);
