@@ -70,12 +70,12 @@ void Dashboard::buildUI() {
     auto agingCards = addWidget(std::make_unique<Wt::WContainerWidget>());
     agingCards->setStyleClass("dashboard-cards");
 
-    // Aging: 1 week
-    auto weekCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
-    weekCard->setStyleClass("dash-card aging-week");
-    agingWeekValue_ = weekCard->addWidget(std::make_unique<Wt::WText>("--"));
-    agingWeekValue_->setStyleClass("dash-card-value");
-    weekCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Week"))->setStyleClass("dash-card-title");
+    // Aging: 1 quarter
+    auto quarterCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
+    quarterCard->setStyleClass("dash-card aging-quarter");
+    agingQuarterValue_ = quarterCard->addWidget(std::make_unique<Wt::WText>("--"));
+    agingQuarterValue_->setStyleClass("dash-card-value");
+    quarterCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Quarter"))->setStyleClass("dash-card-title");
 
     // Aging: 1 month
     auto monthCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
@@ -84,12 +84,12 @@ void Dashboard::buildUI() {
     agingMonthValue_->setStyleClass("dash-card-value");
     monthCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Month"))->setStyleClass("dash-card-title");
 
-    // Aging: 1 quarter
-    auto quarterCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
-    quarterCard->setStyleClass("dash-card aging-quarter");
-    agingQuarterValue_ = quarterCard->addWidget(std::make_unique<Wt::WText>("--"));
-    agingQuarterValue_->setStyleClass("dash-card-value");
-    quarterCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Quarter"))->setStyleClass("dash-card-title");
+    // Aging: 1 week
+    auto weekCard = agingCards->addWidget(std::make_unique<Wt::WContainerWidget>());
+    weekCard->setStyleClass("dash-card aging-week");
+    agingWeekValue_ = weekCard->addWidget(std::make_unique<Wt::WText>("--"));
+    agingWeekValue_->setStyleClass("dash-card-value");
+    weekCard->addWidget(std::make_unique<Wt::WText>("Aging > 1 Week"))->setStyleClass("dash-card-title");
 
     // Refresh button
     auto refreshBtn = addWidget(std::make_unique<Wt::WPushButton>("Refresh"));
