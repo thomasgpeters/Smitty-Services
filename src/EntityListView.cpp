@@ -62,8 +62,13 @@ void EntityListView::clearFilter() {
 
 void EntityListView::refresh() {
     try {
-        json data = ApiClient::instance().fetchAll(entity_->resourceName(), currentFilter_);
-        populateTable(data);
+        auto resp = ApiClient::instance().fetchAll(entity_->resourceName(), currentFilter_);
+        if (!resp.ok()) {
+            statusText_->setTextFormat(Wt::TextFormat::Plain);
+            statusText_->setText("API error: " + resp.errorMessage());
+            return;
+        }
+        populateTable(resp.body);
     } catch (const std::exception& e) {
         statusText_->setTextFormat(Wt::TextFormat::Plain);
         statusText_->setText(std::string("Error loading data: ") + e.what());
