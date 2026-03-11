@@ -351,71 +351,76 @@ body {
 
 /* ===== DASHBOARD ===== */
 .dashboard-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
     margin-bottom: 24px;
 }
 
 .dash-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     background: #ffffff;
-    border-radius: 12px;
-    padding: 24px 28px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-    border-left: 4px solid #4fc3f7;
+    border-radius: 10px;
+    padding: 16px 24px;
+    min-width: 140px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 3px 8px rgba(0,0,0,0.04);
+    border-top: 3px solid #4fc3f7;
     transition: box-shadow 0.2s, transform 0.15s;
 }
 
 .dash-card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.10);
     transform: translateY(-1px);
 }
 
 .dash-card-title {
-    font-size: 12px;
+    font-size: 11px;
     color: #5f6368;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 10px;
+    letter-spacing: 0.5px;
     font-weight: 600;
+    margin-bottom: 6px;
 }
 
 .dash-card-value {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 700;
     color: #1a1a2e;
 }
 
 .dash-card.customers {
-    border-left-color: #4fc3f7;
+    border-top-color: #4fc3f7;
 }
 
 .dash-card.orders {
-    border-left-color: #66bb6a;
+    border-top-color: #66bb6a;
 }
 
 .dash-card.products {
-    border-left-color: #ffa726;
+    border-top-color: #ffa726;
 }
 
 .dash-card.unpaid-revenue {
-    border-left-color: #ef5350;
+    border-top-color: #ef5350;
 }
 
 .dash-card.outstanding-po {
-    border-left-color: #ab47bc;
+    border-top-color: #ab47bc;
 }
 
 .dash-card.aging-week {
-    border-left-color: #ffca28;
+    border-top-color: #ffca28;
 }
 
 .dash-card.aging-month {
-    border-left-color: #ff7043;
+    border-top-color: #ff7043;
 }
 
 .dash-card.aging-quarter {
-    border-left-color: #e53935;
+    border-top-color: #e53935;
 }
 
 /* ===== FILTER CHECKBOX ===== */
