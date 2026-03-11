@@ -64,6 +64,7 @@ target_link_libraries(smitty_services PRIVATE
 )
 
 file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY wt-resources DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY database DESTINATION ${CMAKE_BINARY_DIR})
 file(GLOB SCRIPT_FILES scripts/*.sh)
 file(COPY ${SCRIPT_FILES} DESTINATION ${CMAKE_BINARY_DIR})

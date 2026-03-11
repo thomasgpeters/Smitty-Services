@@ -49,4 +49,4 @@ COPY --from=builder /build/out/resources/ resources/
 EXPOSE 8080
 
 ENTRYPOINT ["./smitty_services"]
-CMD ["--docroot", "resources", "--http-listen", "0.0.0.0:8080"]
+CMD ["--docroot", "resources", "--resources-dir", "/usr/share/Wt/resources", "--http-listen", "0.0.0.0:8080"]

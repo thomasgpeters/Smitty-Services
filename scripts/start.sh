@@ -118,7 +118,9 @@ if [ "$RUN" = true ]; then
     fi
 
     echo "[run] Starting ${SMITTY_EXECUTABLE} on port ${SMITTY_APP_PORT}..."
+    WT_RESOURCES_DIR="${PROJECT_DIR}/${SMITTY_BUILD_DIR}/wt-resources"
     exec "$EXEC_PATH" \
         --docroot "${SMITTY_DOCROOT}" \
+        --resources-dir "${WT_RESOURCES_DIR}" \
         --http-listen "${SMITTY_APP_HOST}:${SMITTY_APP_PORT}"
 fi
