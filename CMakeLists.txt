@@ -46,10 +46,12 @@ set(SOURCES
 
 add_executable(smitty_services ${SOURCES})
 
-target_include_directories(smitty_services PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
-    ${WT_INCLUDE_DIR}
-    ${CURL_INCLUDE_DIRS}
+target_include_directories(smitty_services
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
+    SYSTEM PRIVATE
+        ${WT_INCLUDE_DIR}
+        ${CURL_INCLUDE_DIRS}
 )
 
 target_link_libraries(smitty_services PRIVATE
