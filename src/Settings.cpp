@@ -59,7 +59,7 @@ void SettingsView::buildUI() {
     // Save button
     auto saveBtn = addWidget(std::make_unique<Wt::WPushButton>("Save Settings"));
     saveBtn->setStyleClass("filter-btn");
-    saveBtn->decorationStyle().setProperty(Wt::Property::StyleMarginTop, "20px");
+    saveBtn->setMargin(20, Wt::Side::Top);
     saveBtn->clicked().connect(this, &SettingsView::saveSettings);
 }
 

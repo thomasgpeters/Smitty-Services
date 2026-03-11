@@ -43,4 +43,31 @@
 
 ---
 
+### March 11, 2026 - PDF Report Generation Module
+
+**Objective:** Add lightweight PDF generation capability for printing Orders, Purchase Orders, Customer Monthly Statements, and Revenue Reports.
+
+**Library Selected:** PDFGen (single .c/.h file, public domain, zero dependencies)
+
+**Architecture:**
+- `PdfReport` base class providing reusable document layout primitives:
+  - Page header/footer with "Imagery Business Systems, LLC" branding
+  - Table rendering (header rows, data rows, alignment, currency formatting)
+  - Automatic page breaks when content exceeds page height
+  - Section titles, horizontal rules, text helpers (bold, right-aligned)
+- Subclass hierarchy for specific report types:
+  - `OrderReport` -- Single order invoice with line items and totals
+  - `PurchaseOrderReport` -- PO document with vendor info and authorization lines
+  - `CustomerStatementReport` -- Monthly statement with order summary and billing address
+  - `RevenueReport` -- Revenue breakdown with summary cards and period table
+
+**Files Created:**
+- `include/pdfgen.h` + `src/pdfgen.c` -- PDFGen library (single-file C library)
+- `include/PdfReport.h` + `src/PdfReport.cpp` -- Base report class
+- `include/OrderReport.h` + `src/OrderReport.cpp` -- Order/PO reports
+- `include/CustomerStatementReport.h` + `src/CustomerStatementReport.cpp` -- Statements
+- `include/RevenueReport.h` + `src/RevenueReport.cpp` -- Revenue tracking
+
+---
+
 *Future entries will be appended below as development continues.*

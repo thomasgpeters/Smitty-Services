@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(SmittyServices VERSION 1.0.0 LANGUAGES CXX)
+project(SmittyServices VERSION 1.0.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,14 +37,21 @@ set(SOURCES
     src/ProductList.cpp
     src/ProductDetail.cpp
     src/Settings.cpp
+    src/pdfgen.c
+    src/PdfReport.cpp
+    src/OrderReport.cpp
+    src/CustomerStatementReport.cpp
+    src/RevenueReport.cpp
 )
 
 add_executable(smitty_services ${SOURCES})
 
-target_include_directories(smitty_services PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
-    ${WT_INCLUDE_DIR}
-    ${CURL_INCLUDE_DIRS}
+target_include_directories(smitty_services
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
+    SYSTEM PRIVATE
+        ${WT_INCLUDE_DIR}
+        ${CURL_INCLUDE_DIRS}
 )
 
 target_link_libraries(smitty_services PRIVATE
