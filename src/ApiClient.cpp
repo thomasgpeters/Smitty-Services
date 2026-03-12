@@ -45,7 +45,7 @@ ApiClient& ApiClient::instance() {
 }
 
 ApiClient::ApiClient() {
-    const char* envUrl = std::getenv("SMITTY_API_ENDPOINT");
+    const char* envUrl = std::getenv("ALS_API_URL");
     baseUrl_ = envUrl ? std::string(envUrl) : "http://localhost:5659/api";
 }
 
