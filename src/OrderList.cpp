@@ -33,6 +33,8 @@ public:
     }
 
 protected:
+    bool showRowActions() const override { return true; }
+
     std::string includeParam() const override {
         return "employee,customer";
     }

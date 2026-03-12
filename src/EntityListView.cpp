@@ -1,6 +1,9 @@
 #include "EntityListView.h"
 #include "ApiClient.h"
 #include "AppSettings.h"
+#include <Wt/WDialog.h>
+#include <Wt/WLineEdit.h>
+#include <Wt/WContainerWidget.h>
 
 EntityListView::EntityListView(std::shared_ptr<Entity> entity)
     : entity_(entity)
@@ -87,6 +90,11 @@ bool EntityListView::filterRecord(const json& /*record*/) const {
     return true;
 }
 
+bool EntityListView::showRowActions() const {
+    // Default: no row-level action buttons. Subclasses override to enable.
+    return false;
+}
+
 void EntityListView::applyFilter() {
     currentFilter_ = filterInput_->text().toUTF8();
     refresh();
@@ -119,11 +127,17 @@ void EntityListView::populateTable(const json& data) {
     table_->clear();
 
     auto cols = entity_->listColumns(AppSettings::instance().maxListColumns());
+    bool hasActions = showRowActions();
 
     // Header row
     for (size_t c = 0; c < cols.size(); ++c) {
         table_->elementAt(0, static_cast<int>(c))
               ->addWidget(std::make_unique<Wt::WText>(cols[c].label));
+    }
+    if (hasActions) {
+        auto actionsHeader = table_->elementAt(0, static_cast<int>(cols.size()));
+        actionsHeader->addWidget(std::make_unique<Wt::WText>(""));
+        actionsHeader->setStyleClass("row-actions-header");
     }
 
     // Data rows
@@ -161,12 +175,181 @@ void EntityListView::populateTable(const json& data) {
                     if (rowClickCallback_) rowClickCallback_(id);
                 });
             }
+
+            // Row action buttons: Edit (pencil) and Delete (trashcan)
+            if (hasActions) {
+                auto actionsCell = table_->elementAt(row, static_cast<int>(cols.size()));
+                actionsCell->setStyleClass("row-actions-cell");
+
+                auto editBtn = actionsCell->addWidget(
+                    std::make_unique<Wt::WPushButton>());
+                editBtn->setTextFormat(Wt::TextFormat::XHTML);
+                editBtn->setText("<span class=\"row-action-icon\">&#9998;</span>");
+                editBtn->setStyleClass("row-action-btn row-action-edit");
+                editBtn->setToolTip("Edit");
+                editBtn->clicked().connect([this, id] {
+                    showEditDialog(id);
+                });
+
+                auto deleteBtn = actionsCell->addWidget(
+                    std::make_unique<Wt::WPushButton>());
+                deleteBtn->setTextFormat(Wt::TextFormat::XHTML);
+                deleteBtn->setText("<span class=\"row-action-icon\">&#128465;</span>");
+                deleteBtn->setStyleClass("row-action-btn row-action-delete");
+                deleteBtn->setToolTip("Delete");
+                deleteBtn->clicked().connect([this, id] {
+                    confirmDelete(id);
+                });
+            }
         }
 
         ++row;
     }
 
     statusText_->setText(std::to_string(row - 1) + " record(s) loaded.");
+}
+
+void EntityListView::showEditDialog(const std::string& id) {
+    auto dialog = addChild(std::make_unique<Wt::WDialog>("Edit " + entity_->displayName()));
+    dialog->setStyleClass("smitty-dialog");
+    dialog->setModal(true);
+    dialog->setClosable(true);
+    dialog->rejectWhenEscapePressed(true);
+
+    auto content = dialog->contents();
+    content->setStyleClass("dialog-content");
+
+    auto statusMsg = content->addWidget(std::make_unique<Wt::WText>());
+    statusMsg->setStyleClass("dialog-status");
+
+    // Fetch the current record
+    try {
+        auto resp = ApiClient::instance().fetchOne(entity_->resourceName(), id);
+        if (!resp.ok() || !resp.hasData()) {
+            statusMsg->setText("Error loading record: " + resp.errorMessage());
+            dialog->finished().connect([this, dialog](Wt::DialogCode) { removeChild(dialog); });
+            dialog->show();
+            return;
+        }
+
+        const auto& record = resp.data();
+        const auto& allCols = entity_->columns();
+
+        // Build editable fields (skip primary key)
+        struct FieldEntry {
+            std::string name;
+            Wt::WLineEdit* input;
+        };
+        auto fields = std::make_shared<std::vector<FieldEntry>>();
+
+        for (const auto& col : allCols) {
+            if (col.name == entity_->primaryKey()) continue;
+
+            content->addWidget(std::make_unique<Wt::WText>(col.label))
+                   ->setStyleClass("dialog-label");
+            auto input = content->addWidget(std::make_unique<Wt::WLineEdit>());
+            input->setStyleClass("dialog-input");
+
+            std::string val = entity_->getFieldValue(record, col.name);
+            input->setText(val);
+
+            fields->push_back({col.name, input});
+        }
+
+        // Move status message after fields
+        content->removeWidget(statusMsg);
+        statusMsg = content->addWidget(std::make_unique<Wt::WText>());
+        statusMsg->setStyleClass("dialog-status");
+
+        // Buttons
+        auto btnBar = content->addWidget(std::make_unique<Wt::WContainerWidget>());
+        btnBar->setStyleClass("dialog-buttons");
+
+        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
+        saveBtn->setStyleClass("action-btn");
+
+        saveBtn->clicked().connect([this, id, fields, statusMsg, dialog] {
+            json attrs;
+            for (const auto& f : *fields) {
+                std::string val = f.input->text().toUTF8();
+                if (!val.empty()) {
+                    attrs[f.name] = val;
+                }
+            }
+
+            try {
+                auto resp = ApiClient::instance().updateRecord(
+                    entity_->resourceName(), id, attrs);
+                if (resp.ok()) {
+                    dialog->accept();
+                    refresh();
+                } else {
+                    statusMsg->setText("Error: " + resp.errorMessage());
+                }
+            } catch (const std::exception& e) {
+                statusMsg->setText(std::string("Error: ") + e.what());
+            }
+        });
+    } catch (const std::exception& e) {
+        statusMsg->setText(std::string("Error: ") + e.what());
+    }
+
+    dialog->finished().connect([this, dialog](Wt::DialogCode) {
+        removeChild(dialog);
+    });
+
+    dialog->show();
+}
+
+void EntityListView::confirmDelete(const std::string& id) {
+    auto dialog = addChild(std::make_unique<Wt::WDialog>("Confirm Delete"));
+    dialog->setStyleClass("smitty-dialog");
+    dialog->setModal(true);
+    dialog->setClosable(true);
+    dialog->rejectWhenEscapePressed(true);
+
+    auto content = dialog->contents();
+    content->setStyleClass("dialog-content");
+
+    content->addWidget(std::make_unique<Wt::WText>(
+        "Are you sure you want to delete this " + entity_->displayName() + "?"))
+        ->setStyleClass("dialog-label");
+
+    auto statusMsg = content->addWidget(std::make_unique<Wt::WText>());
+    statusMsg->setStyleClass("dialog-status");
+
+    auto btnBar = content->addWidget(std::make_unique<Wt::WContainerWidget>());
+    btnBar->setStyleClass("dialog-buttons");
+
+    auto deleteBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Delete"));
+    deleteBtn->setStyleClass("action-btn action-btn-danger");
+
+    auto cancelBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Cancel"));
+    cancelBtn->setStyleClass("action-btn action-btn-secondary");
+
+    deleteBtn->clicked().connect([this, id, statusMsg, dialog] {
+        try {
+            auto resp = ApiClient::instance().deleteRecord(entity_->resourceName(), id);
+            if (resp.ok()) {
+                dialog->accept();
+                refresh();
+            } else {
+                statusMsg->setText("Error: " + resp.errorMessage());
+            }
+        } catch (const std::exception& e) {
+            statusMsg->setText(std::string("Error: ") + e.what());
+        }
+    });
+
+    cancelBtn->clicked().connect([dialog] {
+        dialog->reject();
+    });
+
+    dialog->finished().connect([this, dialog](Wt::DialogCode) {
+        removeChild(dialog);
+    });
+
+    dialog->show();
 }
 
 std::string EntityListView::formatCellValue(const ColumnDef& col, const std::string& value) {

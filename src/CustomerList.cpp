@@ -16,6 +16,8 @@ public:
     }
 
 protected:
+    bool showRowActions() const override { return true; }
+
     void addCustomFilters(Wt::WContainerWidget* filterBar) override {
         outstandingBalanceCheck_ = filterBar->addWidget(
             std::make_unique<Wt::WCheckBox>("Outstanding Balance"));
