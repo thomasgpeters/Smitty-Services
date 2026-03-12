@@ -307,10 +307,59 @@ body {
     box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
 }
 
+.detail-form-grid {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0 24px;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 16px;
+}
+
+/* ===== DETAIL CHILD CONTENT (grids below detail form) ===== */
+.detail-child-content {
+    margin-top: 24px;
+}
+
+.child-grid-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.child-grid-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.child-grid-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.child-grid-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: #5f6368;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-bottom: 2px solid #e8eaed;
+}
+
+.child-grid-table td {
+    font-size: 13px;
+    color: #3c4043;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f1f3f4;
 }
 
 .form-label {

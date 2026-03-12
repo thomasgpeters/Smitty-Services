@@ -37,8 +37,13 @@ protected:
                                   const std::string& value,
                                   std::map<std::string, Wt::WLineEdit*>& fieldMap);
 
+    // Hook for subclasses to add child content (grids, etc.) below the detail fields.
+    // Called after populateFields when a record is loaded.
+    virtual void addChildContent(Wt::WContainerWidget* container, const json& record);
+
     std::shared_ptr<Entity> entity_;
     Wt::WContainerWidget* fieldsContainer_;
+    Wt::WContainerWidget* childContainer_;
     Wt::WText* titleText_;
     std::function<void()> backCallback_;
     std::string currentRecordId_;

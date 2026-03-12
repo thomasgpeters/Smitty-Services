@@ -5,6 +5,7 @@
 EntityDetailView::EntityDetailView(std::shared_ptr<Entity> entity)
     : entity_(entity)
     , fieldsContainer_(nullptr)
+    , childContainer_(nullptr)
     , titleText_(nullptr) {
     buildUI();
 }
@@ -38,14 +39,19 @@ void EntityDetailView::buildUI() {
     deleteBtn->setStyleClass("action-btn action-btn-danger");
     deleteBtn->clicked().connect(this, &EntityDetailView::confirmDelete);
 
-    // Fields container
+    // Fields container (3-column grid)
     fieldsContainer_ = addWidget(std::make_unique<Wt::WContainerWidget>());
-    fieldsContainer_->setStyleClass("detail-form");
+    fieldsContainer_->setStyleClass("detail-form detail-form-grid");
+
+    // Child content container (for subclass grids below the form)
+    childContainer_ = addWidget(std::make_unique<Wt::WContainerWidget>());
+    childContainer_->setStyleClass("detail-child-content");
 }
 
 void EntityDetailView::loadRecord(const std::string& id) {
     currentRecordId_ = id;
     fieldsContainer_->clear();
+    childContainer_->clear();
 
     try {
         auto resp = ApiClient::instance().fetchOne(entity_->resourceName(), id);
@@ -57,6 +63,7 @@ void EntityDetailView::loadRecord(const std::string& id) {
         if (resp.hasData()) {
             currentRecord_ = resp.data();
             populateFields(currentRecord_);
+            addChildContent(childContainer_, currentRecord_);
         }
     } catch (const std::exception& e) {
         fieldsContainer_->addWidget(
@@ -100,6 +107,11 @@ bool EntityDetailView::customEditField(Wt::WContainerWidget* /*content*/,
                                         const std::string& /*value*/,
                                         std::map<std::string, Wt::WLineEdit*>& /*fieldMap*/) {
     return false;
+}
+
+void EntityDetailView::addChildContent(Wt::WContainerWidget* /*container*/,
+                                        const json& /*record*/) {
+    // Default: no child content. Subclasses override.
 }
 
 void EntityDetailView::showEditDialog() {
