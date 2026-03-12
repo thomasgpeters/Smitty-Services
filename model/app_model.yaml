@@ -1,5 +1,5 @@
 about:
-  date: March 11, 2026 16:57:01
+  date: March 11, 2026 22:02:52
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -190,6 +190,66 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: employee_id,territory_id
             template_name: module.jinja
+          Job:
+            icon: edit_square
+            menu_name: Job
+            menu_title: Job
+            page:
+              detail:
+                columns: service_description,customer_id,vehicle_id,status,created_date,started_date,completed_date,estimated_cost,actual_cost,notes,job_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Job
+                typescript_name: detail_component.jinja
+                visible_columns: service_description,customer_id,vehicle_id,status,created_date,started_date,completed_date,estimated_cost,actual_cost,notes,job_id
+              home:
+                columns: service_description,customer_id,vehicle_id,status,created_date,started_date,completed_date,estimated_cost,actual_cost,notes,job_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Job
+                typescript_name: home_template.jinja
+                visible_columns: service_description,customer_id,vehicle_id,status,created_date,started_date,completed_date,estimated_cost,actual_cost,notes,job_id
+              new:
+                columns: service_description,customer_id,vehicle_id,status,created_date,started_date,completed_date,estimated_cost,actual_cost,notes,job_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Job
+                typescript_name: new_component.jinja
+                visible_columns: service_description,customer_id,vehicle_id,status,created_date,started_date,completed_date,estimated_cost,actual_cost,notes,job_id
+            template_name: module.jinja
+          JobPurchase:
+            icon: edit_square
+            menu_name: JobPurchase
+            menu_title: JobPurchase
+            page:
+              detail:
+                columns: job_id,purchase_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: JobPurchase
+                typescript_name: detail_component.jinja
+                visible_columns: job_id,purchase_id
+              home:
+                columns: job_id,purchase_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: JobPurchase
+                typescript_name: home_template.jinja
+                visible_columns: job_id,purchase_id
+              new:
+                columns: job_id,purchase_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: JobPurchase
+                typescript_name: new_component.jinja
+                visible_columns: job_id,purchase_id
+            template_name: module.jinja
           Order:
             icon: edit_square
             menu_name: Order
@@ -279,6 +339,66 @@ application:
                 title: Product
                 typescript_name: new_component.jinja
                 visible_columns: product_name,category_id,supplier_id,quantity_per_unit,unit_price,units_in_stock,units_on_order,reorder_level,product_id,discontinued
+            template_name: module.jinja
+          Purchase:
+            icon: edit_square
+            menu_name: Purchase
+            menu_title: Purchase
+            page:
+              detail:
+                columns: purchase_id,supplier_id,purchase_date,expected_date,received_date,status,total_cost,notes
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Purchase
+                typescript_name: detail_component.jinja
+                visible_columns: purchase_id,supplier_id,purchase_date,expected_date,received_date,status,total_cost,notes
+              home:
+                columns: purchase_id,supplier_id,purchase_date,expected_date,received_date,status,total_cost,notes
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Purchase
+                typescript_name: home_template.jinja
+                visible_columns: purchase_id,supplier_id,purchase_date,expected_date,received_date,status,total_cost,notes
+              new:
+                columns: purchase_id,supplier_id,purchase_date,expected_date,received_date,status,total_cost,notes
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Purchase
+                typescript_name: new_component.jinja
+                visible_columns: purchase_id,supplier_id,purchase_date,expected_date,received_date,status,total_cost,notes
+            template_name: module.jinja
+          PurchaseItem:
+            icon: edit_square
+            menu_name: PurchaseItem
+            menu_title: PurchaseItem
+            page:
+              detail:
+                columns: purchase_id,product_id,unit_cost,quantity
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: PurchaseItem
+                typescript_name: detail_component.jinja
+                visible_columns: purchase_id,product_id,unit_cost,quantity
+              home:
+                columns: purchase_id,product_id,unit_cost,quantity
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: PurchaseItem
+                typescript_name: home_template.jinja
+                visible_columns: purchase_id,product_id,unit_cost,quantity
+              new:
+                columns: purchase_id,product_id,unit_cost,quantity
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: PurchaseItem
+                typescript_name: new_component.jinja
+                visible_columns: purchase_id,product_id,unit_cost,quantity
             template_name: module.jinja
           Region:
             icon: edit_square
@@ -430,6 +550,36 @@ application:
                 typescript_name: new_component.jinja
                 visible_columns: state_name,state_abbr,state_region,state_id
             template_name: module.jinja
+          Vehicle:
+            icon: edit_square
+            menu_name: Vehicle
+            menu_title: Vehicle
+            page:
+              detail:
+                columns: description,customer_id,vin,year,make,model,license_plate,notes,vehicle_id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Vehicle
+                typescript_name: detail_component.jinja
+                visible_columns: description,customer_id,vin,year,make,model,license_plate,notes,vehicle_id
+              home:
+                columns: description,customer_id,vin,year,make,model,license_plate,notes,vehicle_id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Vehicle
+                typescript_name: home_template.jinja
+                visible_columns: description,customer_id,vin,year,make,model,license_plate,notes,vehicle_id
+              new:
+                columns: description,customer_id,vin,year,make,model,license_plate,notes,vehicle_id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Vehicle
+                typescript_name: new_component.jinja
+                visible_columns: description,customer_id,vin,year,make,model,license_plate,notes,vehicle_id
+            template_name: module.jinja
         menu_name: data
         menu_title: data
         opened: true
@@ -520,8 +670,18 @@ entities:
     - direction: tomany
       fks:
       - customer_id
+      name: JobList
+      resource: Job
+    - direction: tomany
+      fks:
+      - customer_id
       name: OrderList
       resource: Order
+    - direction: tomany
+      fks:
+      - customer_id
+      name: VehicleList
+      resource: Vehicle
     type: Customer
   CustomerCustomerDemo:
     columns:
@@ -694,6 +854,97 @@ entities:
       name: territory
       resource: Territory
     type: EmployeeTerritory
+  Job:
+    columns:
+    - label: ' service_description*'
+      name: service_description
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: TEXT
+    - name: customer_id
+      required: true
+      template: text
+      type: VARCHAR
+    - name: vehicle_id
+      required: true
+      template: integer
+      type: SMALLINT
+    - name: status
+      required: true
+      template: text
+      type: VARCHAR
+    - name: created_date
+      required: true
+      type: DATE
+    - name: started_date
+      type: DATE
+    - name: completed_date
+      type: DATE
+    - name: estimated_cost
+      template: real
+      type: FLOAT
+    - name: actual_cost
+      template: real
+      type: FLOAT
+    - name: notes
+      template: text
+      type: TEXT
+    - name: job_id
+      template: integer
+      type: SMALLINT
+    favorite: service_description
+    hidden: {}
+    label: Job
+    primary_key:
+    - job_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - job_id
+      name: JobPurchaseList
+      resource: JobPurchase
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - vehicle_id
+      name: vehicle
+      resource: Vehicle
+    type: Job
+  JobPurchase:
+    columns:
+    - label: ' job_id*'
+      name: job_id
+      search: true
+      sort: true
+      template: integer
+      type: SMALLINT
+    - name: purchase_id
+      template: integer
+      type: SMALLINT
+    favorite: job_id
+    hidden: {}
+    label: JobPurchase
+    primary_key:
+    - job_id
+    - purchase_id
+    tab_groups:
+    - direction: toone
+      fks:
+      - job_id
+      name: job
+      resource: Job
+    - direction: toone
+      fks:
+      - purchase_id
+      name: purchase
+      resource: Purchase
+    type: JobPurchase
   Order:
     columns:
     - label: ' ship_name*'
@@ -854,6 +1105,11 @@ entities:
       - product_id
       name: OrderDetailList
       resource: OrderDetail
+    - direction: tomany
+      fks:
+      - product_id
+      name: PurchaseItemList
+      resource: PurchaseItem
     - direction: toone
       fks:
       - category_id
@@ -865,6 +1121,94 @@ entities:
       name: supplier
       resource: Supplier
     type: Product
+  Purchase:
+    columns:
+    - label: ' purchase_id*'
+      name: purchase_id
+      search: true
+      sort: true
+      template: integer
+      type: SMALLINT
+    - name: supplier_id
+      required: true
+      template: integer
+      type: SMALLINT
+    - name: purchase_date
+      required: true
+      type: DATE
+    - name: expected_date
+      type: DATE
+    - name: received_date
+      type: DATE
+    - name: status
+      required: true
+      template: text
+      type: VARCHAR
+    - name: total_cost
+      template: real
+      type: FLOAT
+    - name: notes
+      template: text
+      type: TEXT
+    favorite: purchase_id
+    hidden: {}
+    label: Purchase
+    primary_key:
+    - purchase_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - purchase_id
+      name: JobPurchaseList
+      resource: JobPurchase
+    - direction: tomany
+      fks:
+      - purchase_id
+      name: PurchaseItemList
+      resource: PurchaseItem
+    - direction: toone
+      fks:
+      - supplier_id
+      name: supplier
+      resource: Supplier
+    type: Purchase
+  PurchaseItem:
+    columns:
+    - label: ' purchase_id*'
+      name: purchase_id
+      search: true
+      sort: true
+      template: integer
+      type: SMALLINT
+    - name: product_id
+      template: integer
+      type: SMALLINT
+    - name: unit_cost
+      required: true
+      template: real
+      type: FLOAT
+    - name: quantity
+      required: true
+      template: integer
+      type: SMALLINT
+    favorite: purchase_id
+    hidden: {}
+    label: PurchaseItem
+    primary_key:
+    - purchase_id
+    - product_id
+    tab_groups:
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    - direction: toone
+      fks:
+      - purchase_id
+      name: purchase
+      resource: Purchase
+    type: PurchaseItem
   Region:
     columns:
     - label: ' region_description*'
@@ -969,6 +1313,11 @@ entities:
       - supplier_id
       name: ProductList
       resource: Product
+    - direction: tomany
+      fks:
+      - supplier_id
+      name: PurchaseList
+      resource: Purchase
     type: Supplier
   Territory:
     columns:
@@ -1027,11 +1376,63 @@ entities:
     primary_key:
     - state_id
     type: UsState
+  Vehicle:
+    columns:
+    - label: ' description*'
+      name: description
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: customer_id
+      required: true
+      template: text
+      type: VARCHAR
+    - name: vin
+      required: true
+      template: text
+      type: VARCHAR
+    - name: year
+      template: integer
+      type: SMALLINT
+    - name: make
+      template: text
+      type: VARCHAR
+    - name: model
+      template: text
+      type: VARCHAR
+    - name: license_plate
+      template: text
+      type: VARCHAR
+    - name: notes
+      template: text
+      type: TEXT
+    - name: vehicle_id
+      template: integer
+      type: SMALLINT
+    favorite: description
+    hidden: {}
+    label: Vehicle
+    primary_key:
+    - vehicle_id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - vehicle_id
+      name: JobList
+      resource: Job
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Vehicle
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8
   style_guide:
-    api_endpoint: http://localhost:5659/api
+    api_endpoint: http://localhost:5656/api
     applicationLocales:
     - en
     - es
