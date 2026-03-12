@@ -9,7 +9,7 @@ AppSettings& AppSettings::instance() {
 AppSettings::AppSettings()
     : apiEndpoint_(std::getenv("ALS_API_URL")
                    ? std::getenv("ALS_API_URL")
-                   : "http://localhost:5659/api")
+                   : "http://localhost:5656/api")
     , dateFormat_("YYYY-MM-DD")
     , currencySymbol_("$")
     , locale_("en")
