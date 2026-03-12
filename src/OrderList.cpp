@@ -83,16 +83,16 @@ protected:
         }
         employeeFilterCombo_->changed().connect(this, &EntityListView::refresh);
 
-        // Unpaid Orders checkbox
+        // Unpaid Invoices checkbox
         unpaidCheck_ = filterBar->addWidget(
-            std::make_unique<Wt::WCheckBox>("Unpaid Orders"));
+            std::make_unique<Wt::WCheckBox>("Unpaid Invoices"));
         unpaidCheck_->setStyleClass("filter-checkbox");
         unpaidCheck_->changed().connect(this, &EntityListView::refresh);
     }
 
     void addActionButtons(Wt::WContainerWidget* actionBar) override {
         auto newOrderBtn = actionBar->addWidget(
-            std::make_unique<Wt::WPushButton>("New Order"));
+            std::make_unique<Wt::WPushButton>("New Invoice"));
         newOrderBtn->setStyleClass("action-btn");
         newOrderBtn->clicked().connect(this, &OrderList::showAddOrderDialog);
     }
@@ -417,7 +417,7 @@ private:
     }
 
     void showAddOrderDialog() {
-        auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Order"));
+        auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Invoice"));
         dialog->setStyleClass("smitty-dialog smitty-dialog-wide");
         dialog->setModal(true);
         dialog->setClosable(true);
@@ -443,7 +443,7 @@ private:
         shipNameInput->setStyleClass("dialog-input");
 
         // Order Date
-        content->addWidget(std::make_unique<Wt::WText>("Order Date"))
+        content->addWidget(std::make_unique<Wt::WText>("Invoice Date"))
                ->setStyleClass("dialog-label");
         auto orderDateInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
         orderDateInput->setStyleClass("dialog-input");
@@ -488,7 +488,7 @@ private:
         // Header with title and Add Line button
         auto linesHeader = linesSection->addWidget(std::make_unique<Wt::WContainerWidget>());
         linesHeader->setStyleClass("order-lines-header");
-        linesHeader->addWidget(std::make_unique<Wt::WText>("Order Lines"))
+        linesHeader->addWidget(std::make_unique<Wt::WText>("Invoice Lines"))
                    ->setStyleClass("order-lines-title");
         auto addLineBtn = linesHeader->addWidget(std::make_unique<Wt::WPushButton>("+ Add Line"));
         addLineBtn->setStyleClass("order-lines-add-btn");

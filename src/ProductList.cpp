@@ -67,7 +67,7 @@ protected:
         newProductBtn->clicked().connect(this, &ProductList::showAddProductDialog);
 
         auto newPurchaseBtn = actionBar->addWidget(
-            std::make_unique<Wt::WPushButton>("New Purchase"));
+            std::make_unique<Wt::WPushButton>("New PO"));
         newPurchaseBtn->setStyleClass("action-btn action-btn-secondary");
         newPurchaseBtn->clicked().connect(this, &ProductList::showNewPurchase);
     }

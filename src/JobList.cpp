@@ -301,16 +301,16 @@ private:
 
         auto purchaseHeader = purchaseSection->addWidget(std::make_unique<Wt::WContainerWidget>());
         purchaseHeader->setStyleClass("order-lines-header");
-        purchaseHeader->addWidget(std::make_unique<Wt::WText>("Linked Purchases"))
+        purchaseHeader->addWidget(std::make_unique<Wt::WText>("Linked POs"))
                       ->setStyleClass("order-lines-title");
         auto addPurchBtn = purchaseHeader->addWidget(
-            std::make_unique<Wt::WPushButton>("+ Link Purchase"));
+            std::make_unique<Wt::WPushButton>("+ Link PO"));
         addPurchBtn->setStyleClass("order-lines-add-btn");
 
         auto purchaseTable = purchaseSection->addWidget(std::make_unique<Wt::WTable>());
         purchaseTable->setStyleClass("order-lines-table");
         purchaseTable->setHeaderCount(1);
-        purchaseTable->elementAt(0, 0)->addWidget(std::make_unique<Wt::WText>("Purchase"));
+        purchaseTable->elementAt(0, 0)->addWidget(std::make_unique<Wt::WText>("PO"));
         purchaseTable->elementAt(0, 1)->addWidget(std::make_unique<Wt::WText>(""));
 
         // Load purchases for linking
@@ -347,7 +347,7 @@ private:
                     }
 
                     if (!id.empty()) {
-                        std::string display = supName.empty() ? ("Purchase #" + id) : (supName + " (#" + id + ")");
+                        std::string display = supName.empty() ? ("PO #" + id) : (supName + " (#" + id + ")");
                         if (!status.empty()) display += " [" + status + "]";
                         purchaseDisplayNames[id] = display;
                     }

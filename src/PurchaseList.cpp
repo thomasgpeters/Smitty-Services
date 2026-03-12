@@ -73,7 +73,7 @@ protected:
 
     void addActionButtons(Wt::WContainerWidget* actionBar) override {
         auto newBtn = actionBar->addWidget(
-            std::make_unique<Wt::WPushButton>("New Purchase"));
+            std::make_unique<Wt::WPushButton>("New PO"));
         newBtn->setStyleClass("action-btn");
         newBtn->clicked().connect(this, &PurchaseList::showAddPurchaseDialog);
     }
@@ -268,7 +268,7 @@ private:
     }
 
     void showAddPurchaseDialog() {
-        auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Purchase"));
+        auto dialog = addChild(std::make_unique<Wt::WDialog>("Add PO"));
         dialog->setStyleClass("smitty-dialog smitty-dialog-wide");
         dialog->setModal(true);
         dialog->setClosable(true);
@@ -288,7 +288,7 @@ private:
         }
 
         // Purchase Date
-        content->addWidget(std::make_unique<Wt::WText>("Purchase Date"))
+        content->addWidget(std::make_unique<Wt::WText>("PO Date"))
                ->setStyleClass("dialog-label");
         auto purchDateInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
         purchDateInput->setStyleClass("dialog-input");
@@ -322,7 +322,7 @@ private:
 
         auto itemsHeader = itemsSection->addWidget(std::make_unique<Wt::WContainerWidget>());
         itemsHeader->setStyleClass("order-lines-header");
-        itemsHeader->addWidget(std::make_unique<Wt::WText>("Purchase Items"))
+        itemsHeader->addWidget(std::make_unique<Wt::WText>("PO Items"))
                    ->setStyleClass("order-lines-title");
         auto addItemBtn = itemsHeader->addWidget(
             std::make_unique<Wt::WPushButton>("+ Add Item"));

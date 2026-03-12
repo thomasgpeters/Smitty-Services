@@ -46,14 +46,14 @@ void EntityRegistry::initializeEntities() {
         }
     ));
 
-    // Order entity
+    // Order entity (displayed as "Invoice")
     registerEntity(std::make_shared<Entity>(
-        "Order", "Order", "order_id",
+        "Order", "Invoice", "order_id",
         std::vector<ColumnDef>{
             {"ship_name", "Ship Name", "VARCHAR", false, true, true, true},
             {"customer_id", "Customer", "VARCHAR", false, false, false, true},
-            {"employee_id", "Ordered By", "SMALLINT", false, false, false, true},
-            {"order_date", "Order Date", "DATE", false, false, false, true},
+            {"employee_id", "Invoiced By", "SMALLINT", false, false, false, true},
+            {"order_date", "Invoice Date", "DATE", false, false, false, true},
             {"required_date", "Required Date", "DATE", false, false, false, true},
             {"shipped_date", "Shipped Date", "DATE", false, false, false, true},
             {"freight", "Freight", "FLOAT", false, false, false, true},
@@ -63,15 +63,15 @@ void EntityRegistry::initializeEntities() {
             {"ship_postal_code", "Ship Postal Code", "VARCHAR", false, false, false, true},
             {"ship_country", "Ship Country", "VARCHAR", false, false, false, true},
             {"ship_via", "Ship Via", "SMALLINT", false, false, false, true},
-            {"order_id", "Order ID", "SMALLINT", false, false, false, true}
+            {"order_id", "Invoice ID", "SMALLINT", false, false, false, true}
         }
     ));
 
-    // OrderDetail entity (line items)
+    // OrderDetail entity (invoice line items)
     registerEntity(std::make_shared<Entity>(
-        "OrderDetail", "OrderDetail", "",
+        "OrderDetail", "InvoiceDetail", "",
         std::vector<ColumnDef>{
-            {"order_id", "Order ID", "SMALLINT", false, false, false, true},
+            {"order_id", "Invoice ID", "SMALLINT", false, false, false, true},
             {"product_id", "Product ID", "SMALLINT", false, false, false, true},
             {"unit_price", "Unit Price", "FLOAT", false, false, false, true},
             {"quantity", "Quantity", "SMALLINT", false, false, false, true},
@@ -113,26 +113,26 @@ void EntityRegistry::initializeEntities() {
         }
     ));
 
-    // Purchase entity (supplier purchase order)
+    // Purchase entity (displayed as "PO")
     registerEntity(std::make_shared<Entity>(
-        "Purchase", "Purchase", "purchase_id",
+        "Purchase", "PO", "purchase_id",
         std::vector<ColumnDef>{
             {"supplier_id", "Supplier", "SMALLINT", false, true, false, true},
             {"status", "Status", "VARCHAR", true, false, false, true},
-            {"purchase_date", "Purchase Date", "DATE", false, false, false, true},
+            {"purchase_date", "PO Date", "DATE", false, false, false, true},
             {"expected_date", "Expected Date", "DATE", false, false, false, true},
             {"received_date", "Received Date", "DATE", false, false, false, true},
             {"total_cost", "Total Cost", "FLOAT", false, false, false, true},
             {"notes", "Notes", "TEXT", false, false, false, true},
-            {"purchase_id", "Purchase ID", "SMALLINT", false, false, false, true}
+            {"purchase_id", "PO ID", "SMALLINT", false, false, false, true}
         }
     ));
 
-    // PurchaseItem entity (line items)
+    // PurchaseItem entity (PO line items)
     registerEntity(std::make_shared<Entity>(
-        "PurchaseItem", "PurchaseItem", "",
+        "PurchaseItem", "POItem", "",
         std::vector<ColumnDef>{
-            {"purchase_id", "Purchase ID", "SMALLINT", false, false, false, true},
+            {"purchase_id", "PO ID", "SMALLINT", false, false, false, true},
             {"product_id", "Product ID", "SMALLINT", false, false, false, true},
             {"unit_cost", "Unit Cost", "FLOAT", false, false, false, true},
             {"quantity", "Quantity", "SMALLINT", false, false, false, true}
@@ -141,10 +141,10 @@ void EntityRegistry::initializeEntities() {
 
     // JobPurchase entity (join table)
     registerEntity(std::make_shared<Entity>(
-        "JobPurchase", "JobPurchase", "",
+        "JobPurchase", "JobPO", "",
         std::vector<ColumnDef>{
             {"job_id", "Job ID", "SMALLINT", false, false, false, true},
-            {"purchase_id", "Purchase ID", "SMALLINT", false, false, false, true}
+            {"purchase_id", "PO ID", "SMALLINT", false, false, false, true}
         }
     ));
 

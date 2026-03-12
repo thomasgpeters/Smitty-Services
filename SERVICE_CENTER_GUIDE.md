@@ -9,7 +9,7 @@ The service center manages a small fleet of active jobs at any given time (typic
 - **Customers** who own vehicles and request service
 - **Vehicles** registered to customers with VIN tracking
 - **Jobs** representing individual service/repair engagements
-- **Purchases** for parts and supplies from suppliers, linked to jobs
+- **POs** (Purchase Orders) for parts and supplies from suppliers, linked to jobs
 
 ## Data Model
 
@@ -47,7 +47,7 @@ Represents a service or repair engagement for a specific vehicle.
 | actual_cost | REAL | Final actual cost |
 | notes | TEXT | Internal notes about the job |
 
-### Purchase
+### Purchase (displayed as "PO" in the UI)
 
 Represents a purchase order placed with a supplier for parts and supplies.
 
@@ -100,14 +100,14 @@ New --> In Progress --> Waiting Parts --> In Progress --> Road Test Pending --> 
 |--------|-------------|
 | **New** | Job created, work not yet started |
 | **In Progress** | Technician actively working on the vehicle |
-| **Waiting Parts** | Work paused pending parts delivery (linked to a Purchase) |
+| **Waiting Parts** | Work paused pending parts delivery (linked to a PO) |
 | **Road Test Pending** | Repair complete, needs road test verification |
 | **Complete** | Job finished, vehicle ready for pickup |
 
 ### Status Transitions
 
 - **New -> In Progress**: Technician begins work, `started_date` is set
-- **In Progress -> Waiting Parts**: Parts needed; create a Purchase Order and link it to the job
+- **In Progress -> Waiting Parts**: Parts needed; create a PO and link it to the job
 - **Waiting Parts -> In Progress**: Parts received, work resumes
 - **In Progress -> Road Test Pending**: Repair work finished, road test scheduled
 - **Road Test Pending -> Complete**: Road test passed, `completed_date` is set
@@ -121,7 +121,7 @@ The sidebar includes three entries in the Service Center section:
 
 - **Jobs** - View and manage service jobs
 - **Vehicles** - View and manage registered vehicles
-- **Purchases** - View and manage supplier purchase orders
+- **POs** - View and manage supplier purchase orders
 
 ### Vehicle List Page
 
@@ -155,9 +155,9 @@ The Add Job dialog includes:
 4. **Status dropdown** - Defaults to "New"
 5. **Estimated Cost** - Quote amount
 6. **Notes** - Internal notes
-7. **Linked Purchases section** - Link existing purchase orders to the job
-   - "+ Link Purchase" button adds a row with a purchase dropdown
-   - Dropdown shows supplier name + purchase ID + status
+7. **Linked POs section** - Link existing purchase orders to the job
+   - "+ Link PO" button adds a row with a PO dropdown
+   - Dropdown shows supplier name + PO ID + status
    - Creates `job_purchase` records on save
 
 ### Job Detail Page
@@ -166,35 +166,35 @@ The Add Job dialog includes:
 - **Edit**: Opens edit dialog with Customer/Vehicle/Status dropdowns
 - **Delete**: Confirmation dialog, removes job record
 
-### Purchase List Page
+### PO List Page
 
-- **Status filter dropdown**: Filter by purchase status (New, Ordered, Partial, Received, Cancelled)
+- **Status filter dropdown**: Filter by PO status (New, Ordered, Partial, Received, Cancelled)
 - **Supplier filter dropdown**: Filter by supplier
-- **Open Only checkbox**: Checked by default, hides Received and Cancelled purchases
-- **New Purchase button**: Opens the Add Purchase dialog
+- **Open Only checkbox**: Checked by default, hides Received and Cancelled POs
+- **New PO button**: Opens the Add PO dialog
 - **Supplier column**: Resolves `supplier_id` to company name via JSONAPI `?include=supplier`
-- **Click-through**: Click a purchase row to see full detail with Edit/Delete
+- **Click-through**: Click a PO row to see full detail with Edit/Delete
 
-### Add Purchase Dialog
+### Add PO Dialog
 
-The Add Purchase dialog includes:
+The Add PO dialog includes:
 
 1. **Supplier dropdown** - Select the parts supplier
-2. **Purchase Date** - Date the order is placed
+2. **PO Date** - Date the order is placed
 3. **Expected Date** - When parts are expected to arrive
 4. **Status dropdown** - Defaults to "New"
 5. **Notes** - Additional notes
-6. **Purchase Items section** - Add line items for parts being ordered
+6. **PO Items section** - Add line items for parts being ordered
    - Category/Supplier filter dropdowns to narrow the product list
    - "+ Add Item" button adds a row: Product dropdown, Unit Cost (auto-fills from product), Quantity, Remove
    - Total cost is auto-calculated from items on save
-   - Creates `purchase_item` records after saving the purchase
+   - Creates `purchase_item` records after saving the PO
 
-### Purchase Detail Page
+### PO Detail Page
 
-- Full purchase information display
+- Full PO information display
 - **Edit**: Opens edit dialog with Supplier/Status dropdowns
-- **Delete**: Confirmation dialog, removes purchase record
+- **Delete**: Confirmation dialog, removes PO record
 
 ## Database Setup
 
@@ -230,15 +230,15 @@ Once the tables are created and ALS is configured, the following endpoints becom
 | POST | /api/Job | Create a new job |
 | PATCH | /api/Job/{id} | Update a job (status change, costs, etc.) |
 | DELETE | /api/Job/{id} | Delete a job |
-| GET | /api/Purchase | List all purchases |
-| GET | /api/Purchase/{id} | Get purchase detail |
-| GET | /api/Purchase?include=supplier | List purchases with supplier info |
-| POST | /api/Purchase | Create a new purchase |
-| PATCH | /api/Purchase/{id} | Update a purchase (status, dates, etc.) |
-| DELETE | /api/Purchase/{id} | Delete a purchase |
-| POST | /api/PurchaseItem | Add a line item to a purchase |
-| POST | /api/JobPurchase | Link a purchase to a job |
-| DELETE | /api/JobPurchase/{id} | Unlink a purchase from a job |
+| GET | /api/Purchase | List all POs |
+| GET | /api/Purchase/{id} | Get PO detail |
+| GET | /api/Purchase?include=supplier | List POs with supplier info |
+| POST | /api/Purchase | Create a new PO |
+| PATCH | /api/Purchase/{id} | Update a PO (status, dates, etc.) |
+| DELETE | /api/Purchase/{id} | Delete a PO |
+| POST | /api/PurchaseItem | Add a line item to a PO |
+| POST | /api/JobPurchase | Link a PO to a job |
+| DELETE | /api/JobPurchase/{id} | Unlink a PO from a job |
 
 ## Typical Workflow
 
@@ -247,10 +247,10 @@ Once the tables are created and ALS is configured, the following endpoints becom
 3. **Create a job** via Jobs > New Job, selecting the customer and their vehicle
 4. **Describe the service** needed and provide an estimated cost
 5. **Begin work** - update status to "In Progress"
-6. **Order parts** if needed - create a Purchase via Purchases > New Purchase, selecting the supplier and adding product line items
-7. **Link the purchase** to the job (via the Add Job dialog or by editing the job)
+6. **Order parts** if needed - create a PO via POs > New PO, selecting the supplier and adding product line items
+7. **Link the PO** to the job (via the Add Job dialog or by editing the job)
 8. **Update job status** to "Waiting Parts" while waiting for delivery
-9. **Parts arrive** - update purchase status to "Received", update job status back to "In Progress"
+9. **Parts arrive** - update PO status to "Received", update job status back to "In Progress"
 10. **Complete repair** - update job status to "Road Test Pending"
 11. **Road test passes** - update job status to "Complete", set actual cost
 12. **Customer picks up** vehicle
