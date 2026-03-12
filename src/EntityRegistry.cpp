@@ -113,12 +113,38 @@ void EntityRegistry::initializeEntities() {
         }
     ));
 
+    // Purchase entity (supplier purchase order)
+    registerEntity(std::make_shared<Entity>(
+        "Purchase", "Purchase", "purchase_id",
+        std::vector<ColumnDef>{
+            {"supplier_id", "Supplier", "SMALLINT", false, true, false, true},
+            {"status", "Status", "VARCHAR", true, false, false, true},
+            {"purchase_date", "Purchase Date", "DATE", false, false, false, true},
+            {"expected_date", "Expected Date", "DATE", false, false, false, true},
+            {"received_date", "Received Date", "DATE", false, false, false, true},
+            {"total_cost", "Total Cost", "FLOAT", false, false, false, true},
+            {"notes", "Notes", "TEXT", false, false, false, true},
+            {"purchase_id", "Purchase ID", "SMALLINT", false, false, false, true}
+        }
+    ));
+
+    // PurchaseItem entity (line items)
+    registerEntity(std::make_shared<Entity>(
+        "PurchaseItem", "PurchaseItem", "",
+        std::vector<ColumnDef>{
+            {"purchase_id", "Purchase ID", "SMALLINT", false, false, false, true},
+            {"product_id", "Product ID", "SMALLINT", false, false, false, true},
+            {"unit_cost", "Unit Cost", "FLOAT", false, false, false, true},
+            {"quantity", "Quantity", "SMALLINT", false, false, false, true}
+        }
+    ));
+
     // JobPurchase entity (join table)
     registerEntity(std::make_shared<Entity>(
         "JobPurchase", "JobPurchase", "",
         std::vector<ColumnDef>{
             {"job_id", "Job ID", "SMALLINT", false, false, false, true},
-            {"order_id", "Order ID", "SMALLINT", false, false, false, true}
+            {"purchase_id", "Purchase ID", "SMALLINT", false, false, false, true}
         }
     ));
 

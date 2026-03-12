@@ -23,6 +23,8 @@ extern std::unique_ptr<EntityListView> createJobList();
 extern std::unique_ptr<EntityDetailView> createJobDetail();
 extern std::unique_ptr<EntityListView> createVehicleList();
 extern std::unique_ptr<EntityDetailView> createVehicleDetail();
+extern std::unique_ptr<EntityListView> createPurchaseList();
+extern std::unique_ptr<EntityDetailView> createPurchaseDetail();
 
 SmittyApplication::SmittyApplication(const Wt::WEnvironment& env)
     : Wt::WApplication(env)
@@ -173,6 +175,26 @@ void SmittyApplication::createLayout() {
         contentStack_->setCurrentIndex(vehicleListIdx_);
     });
 
+    // Purchase List
+    auto purchList = createPurchaseList();
+    purchaseListIdx_ = contentStack_->count();
+    auto purchListPtr = purchList.get();
+    contentStack_->addWidget(std::move(purchList));
+
+    // Purchase Detail
+    auto purchDetail = createPurchaseDetail();
+    purchaseDetailIdx_ = contentStack_->count();
+    auto purchDetailPtr = purchDetail.get();
+    contentStack_->addWidget(std::move(purchDetail));
+
+    purchListPtr->setRowClickCallback([this, purchDetailPtr](const std::string& id) {
+        purchDetailPtr->loadRecord(id);
+        contentStack_->setCurrentIndex(purchaseDetailIdx_);
+    });
+    purchDetailPtr->setBackCallback([this] {
+        contentStack_->setCurrentIndex(purchaseListIdx_);
+    });
+
     // Settings
     settingsIdx_ = contentStack_->count();
     contentStack_->addWidget(std::make_unique<SettingsView>());
@@ -196,6 +218,8 @@ void SmittyApplication::navigateTo(const std::string& page) {
         contentStack_->setCurrentIndex(jobListIdx_);
     } else if (page == "vehicles") {
         contentStack_->setCurrentIndex(vehicleListIdx_);
+    } else if (page == "purchases") {
+        contentStack_->setCurrentIndex(purchaseListIdx_);
     } else if (page == "settings") {
         contentStack_->setCurrentIndex(settingsIdx_);
     }

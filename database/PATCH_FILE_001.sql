@@ -1,9 +1,10 @@
 -- ==============================================================================
--- PATCH_FILE_001.sql - Service Center Tables
+-- PATCH_FILE_001.sql - Service Center Tables (Vehicle, Job)
 -- ==============================================================================
--- Adds Vehicle, Job, and JobPurchase tables for the Smitty service center.
+-- Adds Vehicle and Job tables for the Smitty service center.
+-- JobPurchase is created in PATCH_FILE_002.sql (after Purchase table exists).
 --
--- Prerequisites: schema.sql base tables (customer, "order") must exist.
+-- Prerequisites: schema.sql base tables (customer) must exist.
 --
 -- Usage:
 --   psql -U smitty -d smitty_services -f database/PATCH_FILE_001.sql
@@ -49,16 +50,6 @@ CREATE TABLE IF NOT EXISTS job (
 );
 
 -- Valid statuses: New, In Progress, Waiting Parts, Road Test Pending, Complete
-
--- ------------------------------------------------------------------------------
--- JobPurchase: links jobs to purchase orders for parts/supplies
--- ------------------------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS job_purchase (
-    job_id   SMALLINT NOT NULL REFERENCES job(job_id),
-    order_id SMALLINT NOT NULL REFERENCES "order"(order_id),
-    PRIMARY KEY (job_id, order_id)
-);
 
 -- ------------------------------------------------------------------------------
 -- Indexes

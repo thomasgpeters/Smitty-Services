@@ -310,57 +310,80 @@ private:
         auto purchaseTable = purchaseSection->addWidget(std::make_unique<Wt::WTable>());
         purchaseTable->setStyleClass("order-lines-table");
         purchaseTable->setHeaderCount(1);
-        purchaseTable->elementAt(0, 0)->addWidget(std::make_unique<Wt::WText>("Order #"));
+        purchaseTable->elementAt(0, 0)->addWidget(std::make_unique<Wt::WText>("Purchase"));
         purchaseTable->elementAt(0, 1)->addWidget(std::make_unique<Wt::WText>(""));
 
-        // Load orders for linking
-        std::map<std::string, std::string> orderNames;
+        // Load purchases for linking
+        std::map<std::string, std::string> purchaseDisplayNames;
         try {
-            auto resp = ApiClient::instance().fetchAll("Order");
+            auto resp = ApiClient::instance().fetchAll("Purchase", "", "supplier");
             if (resp.ok() && resp.hasData() && resp.data().is_array()) {
-                for (const auto& ord : resp.data()) {
-                    std::string id = ord.contains("id")
-                        ? (ord["id"].is_string() ? ord["id"].get<std::string>() : ord["id"].dump())
+                for (const auto& purch : resp.data()) {
+                    std::string id = purch.contains("id")
+                        ? (purch["id"].is_string() ? purch["id"].get<std::string>() : purch["id"].dump())
                         : "";
-                    std::string shipName;
-                    if (ord.contains("attributes") && ord["attributes"].contains("ship_name")
-                        && !ord["attributes"]["ship_name"].is_null())
-                        shipName = ord["attributes"]["ship_name"].get<std::string>();
-                    if (!id.empty())
-                        orderNames[id] = shipName.empty() ? ("Order #" + id) : (shipName + " (#" + id + ")");
+                    std::string status;
+                    if (purch.contains("attributes") && purch["attributes"].contains("status")
+                        && !purch["attributes"]["status"].is_null())
+                        status = purch["attributes"]["status"].get<std::string>();
+
+                    // Try to get supplier name from included
+                    std::string supName;
+                    if (purch.contains("relationships") && purch["relationships"].contains("supplier")
+                        && purch["relationships"]["supplier"].contains("data")
+                        && !purch["relationships"]["supplier"]["data"].is_null()) {
+                        const auto& relData = purch["relationships"]["supplier"]["data"];
+                        std::string relType = relData.contains("type") ? relData["type"].get<std::string>() : "";
+                        std::string relId = relData.contains("id")
+                            ? (relData["id"].is_string() ? relData["id"].get<std::string>() : relData["id"].dump()) : "";
+                        if (resp.body.contains("included")) {
+                            for (const auto& inc : resp.body["included"]) {
+                                if (inc.contains("type") && inc["type"].get<std::string>() == relType
+                                    && inc.contains("id") && (inc["id"].is_string() ? inc["id"].get<std::string>() : inc["id"].dump()) == relId
+                                    && inc.contains("attributes") && inc["attributes"].contains("company_name"))
+                                    supName = inc["attributes"]["company_name"].get<std::string>();
+                            }
+                        }
+                    }
+
+                    if (!id.empty()) {
+                        std::string display = supName.empty() ? ("Purchase #" + id) : (supName + " (#" + id + ")");
+                        if (!status.empty()) display += " [" + status + "]";
+                        purchaseDisplayNames[id] = display;
+                    }
                 }
             }
         } catch (...) {}
 
-        struct PurchaseRow {
-            Wt::WComboBox* orderCombo;
+        struct PurchaseLinkRow {
+            Wt::WComboBox* purchaseCombo;
             int tableRow;
         };
-        auto purchaseRows = std::make_shared<std::vector<PurchaseRow>>();
+        auto purchaseRows = std::make_shared<std::vector<PurchaseLinkRow>>();
 
-        auto addPurchaseRow = [purchaseTable, purchaseRows, &orderNames]() {
+        auto addPurchaseRow = [purchaseTable, purchaseRows, &purchaseDisplayNames]() {
             int row = purchaseTable->rowCount();
 
-            auto orderCombo = purchaseTable->elementAt(row, 0)->addWidget(
+            auto purchaseCombo = purchaseTable->elementAt(row, 0)->addWidget(
                 std::make_unique<Wt::WComboBox>());
-            orderCombo->setStyleClass("line-combo");
-            orderCombo->addItem("");
-            for (const auto& pair : orderNames) {
-                orderCombo->addItem(pair.second);
+            purchaseCombo->setStyleClass("line-combo");
+            purchaseCombo->addItem("");
+            for (const auto& pair : purchaseDisplayNames) {
+                purchaseCombo->addItem(pair.second);
             }
 
             auto removeBtn = purchaseTable->elementAt(row, 1)->addWidget(
                 std::make_unique<Wt::WPushButton>("×"));
             removeBtn->setStyleClass("line-remove-btn");
 
-            PurchaseRow pr{orderCombo, row};
+            PurchaseLinkRow pr{purchaseCombo, row};
             purchaseRows->push_back(pr);
 
             removeBtn->clicked().connect([purchaseTable, purchaseRows, row] {
                 for (int c = 0; c < 2; c++)
                     purchaseTable->elementAt(row, c)->hide();
                 for (auto& pr : *purchaseRows) {
-                    if (pr.tableRow == row) { pr.orderCombo = nullptr; break; }
+                    if (pr.tableRow == row) { pr.purchaseCombo = nullptr; break; }
                 }
             });
         };
@@ -436,25 +459,25 @@ private:
 
                     if (!newJobId.empty()) {
                         for (const auto& pr : *purchaseRows) {
-                            if (!pr.orderCombo) continue;
-                            std::string orderDisplay = pr.orderCombo->currentText().toUTF8();
-                            if (orderDisplay.empty()) continue;
+                            if (!pr.purchaseCombo) continue;
+                            std::string purchDisplay = pr.purchaseCombo->currentText().toUTF8();
+                            if (purchDisplay.empty()) continue;
 
-                            // Find order ID from display name
-                            std::string orderId;
-                            for (const auto& pair : orderNames) {
-                                if (pair.second == orderDisplay) {
-                                    orderId = pair.first;
+                            // Find purchase ID from display name
+                            std::string purchaseId;
+                            for (const auto& pair : purchaseDisplayNames) {
+                                if (pair.second == purchDisplay) {
+                                    purchaseId = pair.first;
                                     break;
                                 }
                             }
-                            if (orderId.empty()) continue;
+                            if (purchaseId.empty()) continue;
 
                             json jpAttrs;
                             try { jpAttrs["job_id"] = std::stoi(newJobId); }
                             catch (...) { jpAttrs["job_id"] = newJobId; }
-                            try { jpAttrs["order_id"] = std::stoi(orderId); }
-                            catch (...) { jpAttrs["order_id"] = orderId; }
+                            try { jpAttrs["purchase_id"] = std::stoi(purchaseId); }
+                            catch (...) { jpAttrs["purchase_id"] = purchaseId; }
 
                             ApiClient::instance().createRecord("JobPurchase", jpAttrs);
                         }

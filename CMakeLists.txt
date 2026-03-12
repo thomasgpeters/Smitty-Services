@@ -40,6 +40,8 @@ set(SOURCES
     src/JobDetail.cpp
     src/VehicleList.cpp
     src/VehicleDetail.cpp
+    src/PurchaseList.cpp
+    src/PurchaseDetail.cpp
     src/Settings.cpp
     src/pdfgen.c
     src/PdfReport.cpp
