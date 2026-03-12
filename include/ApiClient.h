@@ -28,8 +28,10 @@ public:
     static ApiClient& instance();
 
     // High-level JSONAPI endpoints
-    ApiResponse fetchAll(const std::string& resource, const std::string& filter = "");
+    ApiResponse fetchAll(const std::string& resource, const std::string& filter = "",
+                         const std::string& include = "");
     ApiResponse fetchOne(const std::string& resource, const std::string& id);
+    ApiResponse createRecord(const std::string& resource, const json& attributes);
 
     void setBaseUrl(const std::string& url);
     std::string getBaseUrl() const;
@@ -42,6 +44,7 @@ private:
 
     // Raw HTTP with status code capture
     ApiResponse httpGet(const std::string& url);
+    ApiResponse httpPost(const std::string& url, const std::string& body);
 
     // Parse and validate JSONAPI response body
     ApiResponse parseResponse(const std::string& rawBody, long httpStatus, const std::string& url);

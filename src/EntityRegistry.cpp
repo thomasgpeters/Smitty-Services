@@ -37,9 +37,9 @@ void EntityRegistry::initializeEntities() {
             {"contact_title", "Contact Title", "VARCHAR", false, false, false, true},
             {"address", "Address", "VARCHAR", false, false, false, true},
             {"city", "City", "VARCHAR", false, false, false, true},
-            {"region", "Region", "VARCHAR", false, false, false, true},
+            {"region", "Region", "VARCHAR", false, false, false, false},
             {"postal_code", "Postal Code", "VARCHAR", false, false, false, true},
-            {"country", "Country", "VARCHAR", false, false, false, true},
+            {"country", "Country", "VARCHAR", false, false, false, false},
             {"phone", "Phone", "VARCHAR", false, false, false, true},
             {"fax", "Fax", "VARCHAR", false, false, false, true},
             {"customer_id", "Customer ID", "VARCHAR", true, false, false, true}
@@ -51,8 +51,8 @@ void EntityRegistry::initializeEntities() {
         "Order", "Order", "order_id",
         std::vector<ColumnDef>{
             {"ship_name", "Ship Name", "VARCHAR", false, true, true, true},
-            {"customer_id", "Customer ID", "VARCHAR", false, false, false, true},
-            {"employee_id", "Employee ID", "SMALLINT", false, false, false, true},
+            {"customer_id", "Customer", "VARCHAR", false, false, false, true},
+            {"employee_id", "Ordered By", "SMALLINT", false, false, false, true},
             {"order_date", "Order Date", "DATE", false, false, false, true},
             {"required_date", "Required Date", "DATE", false, false, false, true},
             {"shipped_date", "Shipped Date", "DATE", false, false, false, true},
@@ -72,8 +72,8 @@ void EntityRegistry::initializeEntities() {
         "Product", "Product", "product_id",
         std::vector<ColumnDef>{
             {"product_name", "Product Name", "VARCHAR", true, true, true, true},
-            {"category_id", "Category ID", "SMALLINT", false, false, false, true},
-            {"supplier_id", "Supplier ID", "SMALLINT", false, false, false, true},
+            {"category_id", "Category", "SMALLINT", false, false, false, true},
+            {"supplier_id", "Supplier", "SMALLINT", false, false, false, true},
             {"quantity_per_unit", "Qty Per Unit", "VARCHAR", false, false, false, true},
             {"unit_price", "Unit Price", "FLOAT", false, false, false, true},
             {"units_in_stock", "In Stock", "SMALLINT", false, false, false, true},
