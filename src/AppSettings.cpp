@@ -1,4 +1,5 @@
 #include "AppSettings.h"
+#include <cstdlib>
 
 AppSettings& AppSettings::instance() {
     static AppSettings settings;
@@ -6,7 +7,11 @@ AppSettings& AppSettings::instance() {
 }
 
 AppSettings::AppSettings()
-    : apiEndpoint_("http://localhost:5659/api")
+    : apiEndpoint_(std::getenv("ALS_API_URL")
+                   ? std::getenv("ALS_API_URL")
+                   : (std::getenv("SMITTY_API_ENDPOINT")
+                      ? std::getenv("SMITTY_API_ENDPOINT")
+                      : "http://localhost:5656/api"))
     , dateFormat_("YYYY-MM-DD")
     , currencySymbol_("$")
     , locale_("en")
