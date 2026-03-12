@@ -143,6 +143,151 @@ ApiResponse ApiClient::httpGet(const std::string& url) {
     return resp;
 }
 
+ApiResponse ApiClient::httpPost(const std::string& url, const std::string& postBody) {
+    logRequest("POST", url);
+    auto startTime = std::chrono::steady_clock::now();
+
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        logError("POST", url, "Failed to initialize CURL");
+        throw std::runtime_error("Failed to initialize CURL");
+    }
+
+    std::string rawBody;
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, "Content-Type: application/vnd.api+json");
+    headers = curl_slist_append(headers, "Accept: application/vnd.api+json");
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &rawBody);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postBody.c_str());
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, static_cast<long>(postBody.size()));
+
+    CURLcode res = curl_easy_perform(curl);
+
+    long httpStatus = 0;
+    if (res == CURLE_OK) {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpStatus);
+    }
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    auto endTime = std::chrono::steady_clock::now();
+    double elapsedMs = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+
+    if (res != CURLE_OK) {
+        std::string errMsg = std::string("HTTP request failed: ") + curl_easy_strerror(res);
+        logError("POST", url, errMsg);
+        throw std::runtime_error(errMsg);
+    }
+
+    ApiResponse resp = parseResponse(rawBody, httpStatus, url);
+    logResponse("POST", url, httpStatus, elapsedMs, resp);
+    return resp;
+}
+
+ApiResponse ApiClient::httpPatch(const std::string& url, const std::string& patchBody) {
+    logRequest("PATCH", url);
+    auto startTime = std::chrono::steady_clock::now();
+
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        logError("PATCH", url, "Failed to initialize CURL");
+        throw std::runtime_error("Failed to initialize CURL");
+    }
+
+    std::string rawBody;
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, "Content-Type: application/vnd.api+json");
+    headers = curl_slist_append(headers, "Accept: application/vnd.api+json");
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &rawBody);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, patchBody.c_str());
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, static_cast<long>(patchBody.size()));
+
+    CURLcode res = curl_easy_perform(curl);
+
+    long httpStatus = 0;
+    if (res == CURLE_OK) {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpStatus);
+    }
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    auto endTime = std::chrono::steady_clock::now();
+    double elapsedMs = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+
+    if (res != CURLE_OK) {
+        std::string errMsg = std::string("HTTP request failed: ") + curl_easy_strerror(res);
+        logError("PATCH", url, errMsg);
+        throw std::runtime_error(errMsg);
+    }
+
+    ApiResponse resp = parseResponse(rawBody, httpStatus, url);
+    logResponse("PATCH", url, httpStatus, elapsedMs, resp);
+    return resp;
+}
+
+ApiResponse ApiClient::httpDelete(const std::string& url) {
+    logRequest("DELETE", url);
+    auto startTime = std::chrono::steady_clock::now();
+
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        logError("DELETE", url, "Failed to initialize CURL");
+        throw std::runtime_error("Failed to initialize CURL");
+    }
+
+    std::string rawBody;
+    struct curl_slist* headers = nullptr;
+    headers = curl_slist_append(headers, "Content-Type: application/vnd.api+json");
+    headers = curl_slist_append(headers, "Accept: application/vnd.api+json");
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &rawBody);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+    CURLcode res = curl_easy_perform(curl);
+
+    long httpStatus = 0;
+    if (res == CURLE_OK) {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpStatus);
+    }
+
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(curl);
+
+    auto endTime = std::chrono::steady_clock::now();
+    double elapsedMs = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+
+    if (res != CURLE_OK) {
+        std::string errMsg = std::string("HTTP request failed: ") + curl_easy_strerror(res);
+        logError("DELETE", url, errMsg);
+        throw std::runtime_error(errMsg);
+    }
+
+    ApiResponse resp = parseResponse(rawBody, httpStatus, url);
+    logResponse("DELETE", url, httpStatus, elapsedMs, resp);
+    return resp;
+}
+
 // ---------------------------------------------------------------------------
 // JSONAPI response parsing
 // ---------------------------------------------------------------------------
@@ -187,10 +332,16 @@ ApiResponse ApiClient::parseResponse(const std::string& rawBody, long httpStatus
 // High-level JSONAPI endpoints
 // ---------------------------------------------------------------------------
 
-ApiResponse ApiClient::fetchAll(const std::string& resource, const std::string& filter) {
+ApiResponse ApiClient::fetchAll(const std::string& resource, const std::string& filter,
+                                const std::string& include) {
     std::string url = baseUrl_ + "/" + resource;
+    std::string sep = "?";
     if (!filter.empty()) {
-        url += "?filter[" + resource + "]=" + filter;
+        url += sep + "filter[" + resource + "]=" + filter;
+        sep = "&";
+    }
+    if (!include.empty()) {
+        url += sep + "include=" + include;
     }
     return httpGet(url);
 }
@@ -198,4 +349,33 @@ ApiResponse ApiClient::fetchAll(const std::string& resource, const std::string& 
 ApiResponse ApiClient::fetchOne(const std::string& resource, const std::string& id) {
     std::string url = baseUrl_ + "/" + resource + "/" + id;
     return httpGet(url);
+}
+
+ApiResponse ApiClient::createRecord(const std::string& resource, const json& attributes) {
+    std::string url = baseUrl_ + "/" + resource;
+    json payload = {
+        {"data", {
+            {"type", resource},
+            {"attributes", attributes}
+        }}
+    };
+    return httpPost(url, payload.dump());
+}
+
+ApiResponse ApiClient::updateRecord(const std::string& resource, const std::string& id,
+                                     const json& attributes) {
+    std::string url = baseUrl_ + "/" + resource + "/" + id;
+    json payload = {
+        {"data", {
+            {"type", resource},
+            {"id", id},
+            {"attributes", attributes}
+        }}
+    };
+    return httpPatch(url, payload.dump());
+}
+
+ApiResponse ApiClient::deleteRecord(const std::string& resource, const std::string& id) {
+    std::string url = baseUrl_ + "/" + resource + "/" + id;
+    return httpDelete(url);
 }

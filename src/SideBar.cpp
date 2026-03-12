@@ -7,8 +7,12 @@ SideBar::SideBar()
     addButton("\xF0\x9F\x93\x8A", "Dashboard", "dashboard");  // chart icon
     addSeparator();
     addButton("\xF0\x9F\x91\xA5", "Customers", "customers");   // people icon
-    addButton("\xF0\x9F\x93\x8B", "Orders", "orders");          // clipboard icon
+    addButton("\xF0\x9F\x93\x8B", "Invoices", "orders");         // clipboard icon
     addButton("\xF0\x9F\x93\xA6", "Products", "products");      // package icon
+    addSeparator();
+    addButton("\xF0\x9F\x94\xA7", "Jobs", "jobs");              // wrench icon
+    addButton("\xF0\x9F\x9A\x9B", "Vehicles", "vehicles");      // truck icon
+    addButton("\xF0\x9F\x9B\x92", "POs", "purchases");           // shopping cart icon
     addSeparator();
     addButton("\xE2\x9A\x99", "Settings", "settings");          // gear icon
 }

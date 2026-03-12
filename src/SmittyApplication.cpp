@@ -19,6 +19,12 @@ extern std::unique_ptr<EntityListView> createOrderList();
 extern std::unique_ptr<EntityDetailView> createOrderDetail();
 extern std::unique_ptr<EntityListView> createProductList();
 extern std::unique_ptr<EntityDetailView> createProductDetail();
+extern std::unique_ptr<EntityListView> createJobList();
+extern std::unique_ptr<EntityDetailView> createJobDetail();
+extern std::unique_ptr<EntityListView> createVehicleList();
+extern std::unique_ptr<EntityDetailView> createVehicleDetail();
+extern std::unique_ptr<EntityListView> createPurchaseList();
+extern std::unique_ptr<EntityDetailView> createPurchaseDetail();
 
 SmittyApplication::SmittyApplication(const Wt::WEnvironment& env)
     : Wt::WApplication(env)
@@ -129,7 +135,67 @@ void SmittyApplication::createLayout() {
         contentStack_->setCurrentIndex(productListIdx_);
     });
 
-    // Settings (index 7)
+    // Job List
+    auto jobList = createJobList();
+    jobListIdx_ = contentStack_->count();
+    auto jobListPtr = jobList.get();
+    contentStack_->addWidget(std::move(jobList));
+
+    // Job Detail
+    auto jobDetail = createJobDetail();
+    jobDetailIdx_ = contentStack_->count();
+    auto jobDetailPtr = jobDetail.get();
+    contentStack_->addWidget(std::move(jobDetail));
+
+    jobListPtr->setRowClickCallback([this, jobDetailPtr](const std::string& id) {
+        jobDetailPtr->loadRecord(id);
+        contentStack_->setCurrentIndex(jobDetailIdx_);
+    });
+    jobDetailPtr->setBackCallback([this] {
+        contentStack_->setCurrentIndex(jobListIdx_);
+    });
+
+    // Vehicle List
+    auto vehList = createVehicleList();
+    vehicleListIdx_ = contentStack_->count();
+    auto vehListPtr = vehList.get();
+    contentStack_->addWidget(std::move(vehList));
+
+    // Vehicle Detail
+    auto vehDetail = createVehicleDetail();
+    vehicleDetailIdx_ = contentStack_->count();
+    auto vehDetailPtr = vehDetail.get();
+    contentStack_->addWidget(std::move(vehDetail));
+
+    vehListPtr->setRowClickCallback([this, vehDetailPtr](const std::string& id) {
+        vehDetailPtr->loadRecord(id);
+        contentStack_->setCurrentIndex(vehicleDetailIdx_);
+    });
+    vehDetailPtr->setBackCallback([this] {
+        contentStack_->setCurrentIndex(vehicleListIdx_);
+    });
+
+    // Purchase List
+    auto purchList = createPurchaseList();
+    purchaseListIdx_ = contentStack_->count();
+    auto purchListPtr = purchList.get();
+    contentStack_->addWidget(std::move(purchList));
+
+    // Purchase Detail
+    auto purchDetail = createPurchaseDetail();
+    purchaseDetailIdx_ = contentStack_->count();
+    auto purchDetailPtr = purchDetail.get();
+    contentStack_->addWidget(std::move(purchDetail));
+
+    purchListPtr->setRowClickCallback([this, purchDetailPtr](const std::string& id) {
+        purchDetailPtr->loadRecord(id);
+        contentStack_->setCurrentIndex(purchaseDetailIdx_);
+    });
+    purchDetailPtr->setBackCallback([this] {
+        contentStack_->setCurrentIndex(purchaseListIdx_);
+    });
+
+    // Settings
     settingsIdx_ = contentStack_->count();
     contentStack_->addWidget(std::make_unique<SettingsView>());
 
@@ -148,6 +214,12 @@ void SmittyApplication::navigateTo(const std::string& page) {
         contentStack_->setCurrentIndex(orderListIdx_);
     } else if (page == "products") {
         contentStack_->setCurrentIndex(productListIdx_);
+    } else if (page == "jobs") {
+        contentStack_->setCurrentIndex(jobListIdx_);
+    } else if (page == "vehicles") {
+        contentStack_->setCurrentIndex(vehicleListIdx_);
+    } else if (page == "purchases") {
+        contentStack_->setCurrentIndex(purchaseListIdx_);
     } else if (page == "settings") {
         contentStack_->setCurrentIndex(settingsIdx_);
     }

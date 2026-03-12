@@ -36,6 +36,12 @@ set(SOURCES
     src/OrderDetail.cpp
     src/ProductList.cpp
     src/ProductDetail.cpp
+    src/JobList.cpp
+    src/JobDetail.cpp
+    src/VehicleList.cpp
+    src/VehicleDetail.cpp
+    src/PurchaseList.cpp
+    src/PurchaseDetail.cpp
     src/Settings.cpp
     src/pdfgen.c
     src/PdfReport.cpp

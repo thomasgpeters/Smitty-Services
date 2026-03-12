@@ -3,6 +3,7 @@
 
 #include <Wt/WContainerWidget.h>
 #include <Wt/WTable.h>
+#include <Wt/WTableCell.h>
 #include <Wt/WLineEdit.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WCheckBox.h>
@@ -33,6 +34,21 @@ protected:
     // Called during buildUI after the main filter bar is created.
     virtual void addCustomFilters(Wt::WContainerWidget* filterBar);
 
+    // Hook for subclasses to add action buttons (New, etc.) to the right side of filter bar.
+    virtual void addActionButtons(Wt::WContainerWidget* actionBar);
+
+    // Hook for subclasses to specify JSONAPI include parameter (e.g. "category,supplier").
+    virtual std::string includeParam() const;
+
+    // Hook for subclasses to resolve a field value using included relationship data.
+    virtual std::string resolveFieldValue(const json& record, const ColumnDef& col,
+                                          const std::string& rawValue) const;
+
+    // Hook for subclasses to add custom widgets to a cell (e.g. clickable links).
+    // Return true if the cell was handled (no default text will be added).
+    virtual bool customRenderCell(Wt::WTableCell* cell, const json& record,
+                                  const ColumnDef& col, const std::string& value);
+
     // Hook for subclasses to filter records client-side after API fetch.
     // Default returns true for all records (no filtering).
     virtual bool filterRecord(const json& record) const;
@@ -43,6 +59,7 @@ protected:
     Wt::WText* statusText_;
     std::function<void(const std::string&)> rowClickCallback_;
     std::string currentFilter_;
+    json lastResponseBody_;
 };
 
 #endif // ENTITY_LIST_VIEW_H

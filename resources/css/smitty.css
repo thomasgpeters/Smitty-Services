@@ -434,6 +434,361 @@ body {
     padding-left: 8px;
 }
 
+/* ===== ACTION BUTTONS ===== */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.action-btn {
+    padding: 9px 20px;
+    background: #16213e;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.action-btn:hover {
+    background: #1a1a2e;
+    box-shadow: 0 2px 6px rgba(26,26,46,0.25);
+}
+
+.action-btn-secondary {
+    background: #e8eaed;
+    color: #3c4043;
+}
+
+.action-btn-secondary:hover {
+    background: #dadce0;
+    box-shadow: none;
+}
+
+/* ===== CELL LINK ===== */
+.cell-link {
+    color: #1a73e8;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.cell-link:hover {
+    color: #174ea6;
+}
+
+/* ===== DIALOG / MODAL ===== */
+
+/* Opaque backdrop */
+.Wt-dialogcover {
+    background: rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Dialog card */
+.smitty-dialog .Wt-dialog {
+    border-radius: 14px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.12);
+    border: none;
+    overflow: hidden;
+    background: #ffffff;
+    min-width: 420px;
+    max-width: 640px;
+}
+
+.smitty-dialog-wide .Wt-dialog {
+    min-width: 520px;
+}
+
+/* Dialog header / titlebar */
+.smitty-dialog .titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1a1a2e;
+    color: #ffffff;
+    padding: 16px 24px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    border-bottom: 2px solid #4fc3f7;
+}
+
+/* X close button in titlebar */
+.smitty-dialog .titlebar .closeicon {
+    color: #ffffff;
+    opacity: 0.7;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: opacity 0.2s, background 0.2s;
+}
+
+.smitty-dialog .titlebar .closeicon:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.15);
+}
+
+/* Custom X close button (fallback if Wt closeicon not rendered) */
+.dialog-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 300;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    line-height: 1;
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0.7;
+    z-index: 10;
+}
+
+.dialog-close-btn:hover {
+    opacity: 1;
+    background: rgba(255,255,255,0.15);
+}
+
+/* Dialog body */
+.dialog-content {
+    padding: 24px 28px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #ffffff;
+}
+
+.dialog-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #5f6368;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-top: 14px;
+    margin-bottom: 5px;
+}
+
+.dialog-label:first-child {
+    margin-top: 0;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f8f9fb;
+}
+
+.dialog-input:focus {
+    border-color: #4fc3f7;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
+}
+
+.dialog-status {
+    display: block;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #d93025;
+    font-weight: 500;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1.5px solid #e8eaed;
+}
+
+/* Delete button variant */
+.action-btn-danger {
+    background: #d93025;
+    color: #ffffff;
+}
+
+.action-btn-danger:hover {
+    background: #c62828;
+    box-shadow: 0 2px 6px rgba(217,48,37,0.3);
+}
+
+.dialog-confirm-text {
+    font-size: 14px;
+    color: #3c4043;
+    line-height: 1.6;
+    padding: 8px 0;
+}
+
+/* ===== ORDER LINES (inline table in dialog) ===== */
+.order-lines-section {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1.5px solid #e8eaed;
+}
+
+.order-lines-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.order-lines-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.order-lines-add-btn {
+    padding: 6px 14px;
+    background: #e8eaed;
+    color: #3c4043;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.order-lines-add-btn:hover {
+    background: #dadce0;
+}
+
+.order-lines-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.order-lines-filter-combo {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 12px;
+    background: #f8f9fb;
+    outline: none;
+}
+
+.order-lines-filter-combo:focus {
+    border-color: #4fc3f7;
+    background: #ffffff;
+}
+
+.order-lines-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #f8f9fb;
+    border-radius: 8px;
+    border: 1.5px solid #e8eaed;
+    overflow: hidden;
+}
+
+.order-lines-table th {
+    background: #eef0f4;
+    color: #5f6368;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 8px 10px;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.order-lines-table td {
+    padding: 6px 8px;
+    font-size: 13px;
+    border-bottom: 1px solid #eef0f4;
+    vertical-align: middle;
+}
+
+.order-lines-table tr:last-child td {
+    border-bottom: none;
+}
+
+.line-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 12px;
+    background: #ffffff;
+    outline: none;
+}
+
+.line-input:focus {
+    border-color: #4fc3f7;
+}
+
+.line-combo {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 12px;
+    background: #ffffff;
+    outline: none;
+}
+
+.line-remove-btn {
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #d93025;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.line-remove-btn:hover {
+    background: #fce8e6;
+    border-color: #d93025;
+}
+
+.order-lines-empty {
+    text-align: center;
+    color: #9aa0a6;
+    font-size: 13px;
+    padding: 16px;
+    font-style: italic;
+}
+
+/* ===== LIST FILTER DROPDOWNS ===== */
+.filter-combo {
+    padding: 8px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #f8f9fb;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-combo:focus {
+    border-color: #4fc3f7;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
+}
+
 /* ===== SETTINGS ===== */
 .settings-section {
     max-width: 640px;

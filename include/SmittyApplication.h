@@ -30,6 +30,12 @@ private:
     int orderDetailIdx_;
     int productListIdx_;
     int productDetailIdx_;
+    int jobListIdx_;
+    int jobDetailIdx_;
+    int vehicleListIdx_;
+    int vehicleDetailIdx_;
+    int purchaseListIdx_;
+    int purchaseDetailIdx_;
     int settingsIdx_;
 };
 

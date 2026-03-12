@@ -41,6 +41,11 @@ void EntityListView::buildUI() {
     // Allow subclasses to add custom filter widgets
     addCustomFilters(filterBar);
 
+    // Action buttons container (floated right)
+    auto actionBar = filterBar->addWidget(std::make_unique<Wt::WContainerWidget>());
+    actionBar->setStyleClass("action-buttons");
+    addActionButtons(actionBar);
+
     // Status text
     statusText_ = addWidget(std::make_unique<Wt::WText>());
 
@@ -54,6 +59,27 @@ void EntityListView::buildUI() {
 
 void EntityListView::addCustomFilters(Wt::WContainerWidget* /*filterBar*/) {
     // Default: no custom filters. Subclasses override this.
+}
+
+void EntityListView::addActionButtons(Wt::WContainerWidget* /*actionBar*/) {
+    // Default: no action buttons. Subclasses override this.
+}
+
+std::string EntityListView::includeParam() const {
+    // Default: no includes. Subclasses override for relationship loading.
+    return "";
+}
+
+std::string EntityListView::resolveFieldValue(const json& /*record*/, const ColumnDef& /*col*/,
+                                               const std::string& rawValue) const {
+    // Default: return the raw value. Subclasses override to resolve relationships.
+    return rawValue;
+}
+
+bool EntityListView::customRenderCell(Wt::WTableCell* /*cell*/, const json& /*record*/,
+                                       const ColumnDef& /*col*/, const std::string& /*value*/) {
+    // Default: no custom rendering. Subclasses override to add clickable links, etc.
+    return false;
 }
 
 bool EntityListView::filterRecord(const json& /*record*/) const {
@@ -74,12 +100,14 @@ void EntityListView::clearFilter() {
 
 void EntityListView::refresh() {
     try {
-        auto resp = ApiClient::instance().fetchAll(entity_->resourceName(), currentFilter_);
+        auto resp = ApiClient::instance().fetchAll(entity_->resourceName(), currentFilter_,
+                                                     includeParam());
         if (!resp.ok()) {
             statusText_->setTextFormat(Wt::TextFormat::Plain);
             statusText_->setText("API error: " + resp.errorMessage());
             return;
         }
+        lastResponseBody_ = resp.body;
         populateTable(resp.body);
     } catch (const std::exception& e) {
         statusText_->setTextFormat(Wt::TextFormat::Plain);
@@ -112,10 +140,12 @@ void EntityListView::populateTable(const json& data) {
 
         for (size_t c = 0; c < cols.size(); ++c) {
             std::string val = entity_->getFieldValue(record, cols[c].name);
+            val = resolveFieldValue(record, cols[c], val);
             std::string formatted = formatCellValue(cols[c], val);
-            auto text = std::make_unique<Wt::WText>(formatted, Wt::TextFormat::Plain);
-            table_->elementAt(row, static_cast<int>(c))
-                  ->addWidget(std::move(text));
+            auto cell = table_->elementAt(row, static_cast<int>(c));
+            if (!customRenderCell(cell, record, cols[c], formatted)) {
+                cell->addWidget(std::make_unique<Wt::WText>(formatted, Wt::TextFormat::Plain));
+            }
         }
 
         // Click handler for row
