@@ -9,7 +9,7 @@ The service center manages a small fleet of active jobs at any given time (typic
 - **Customers** who own vehicles and request service
 - **Vehicles** registered to customers with VIN tracking
 - **Jobs** representing individual service/repair engagements
-- **Purchases** (orders) for parts and supplies linked to jobs
+- **Purchases** for parts and supplies from suppliers, linked to jobs
 
 ## Data Model
 
