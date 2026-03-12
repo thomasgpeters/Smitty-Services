@@ -8,6 +8,7 @@
 #include <Wt/WPushButton.h>
 #include <Wt/WCheckBox.h>
 #include <Wt/WText.h>
+#include <Wt/WDialog.h>
 #include <string>
 #include <functional>
 #include <memory>
@@ -52,6 +53,15 @@ protected:
     // Hook for subclasses to filter records client-side after API fetch.
     // Default returns true for all records (no filtering).
     virtual bool filterRecord(const json& record) const;
+
+    // Return true to show Edit (pencil) and Delete (trashcan) buttons on each row.
+    virtual bool showRowActions() const;
+
+    // Generic edit dialog: fetches the record, shows editable fields, PATCHes on save.
+    void showEditDialog(const std::string& id);
+
+    // Confirm-and-delete: shows a confirmation dialog, DELETEs on confirm, refreshes.
+    void confirmDelete(const std::string& id);
 
     std::shared_ptr<Entity> entity_;
     Wt::WLineEdit* filterInput_;
