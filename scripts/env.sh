@@ -23,6 +23,7 @@ export SMITTY_DOCROOT="${SMITTY_DOCROOT:-./resources}"
 export SMITTY_API_HOST="${SMITTY_API_HOST:-localhost}"
 export SMITTY_API_PORT="${SMITTY_API_PORT:-5656}"
 export SMITTY_API_ENDPOINT="${SMITTY_API_ENDPOINT:-http://${SMITTY_API_HOST}:${SMITTY_API_PORT}/api}"
+export ALS_API_URL="${ALS_API_URL:-${SMITTY_API_ENDPOINT}}"
 
 # ------------------------------------------------------------------------------
 # Build Configuration

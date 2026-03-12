@@ -45,8 +45,13 @@ ApiClient& ApiClient::instance() {
 }
 
 ApiClient::ApiClient() {
-    const char* envUrl = std::getenv("ALS_API_URL");
-    baseUrl_ = envUrl ? std::string(envUrl) : "http://localhost:5656/api";
+    const char* alsUrl = std::getenv("ALS_API_URL");
+    if (alsUrl) {
+        baseUrl_ = alsUrl;
+    } else {
+        const char* smittyUrl = std::getenv("SMITTY_API_ENDPOINT");
+        baseUrl_ = smittyUrl ? std::string(smittyUrl) : "http://localhost:5656/api";
+    }
 }
 
 void ApiClient::setBaseUrl(const std::string& url) {
