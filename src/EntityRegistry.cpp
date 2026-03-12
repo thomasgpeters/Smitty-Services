@@ -79,6 +79,49 @@ void EntityRegistry::initializeEntities() {
         }
     ));
 
+    // Vehicle entity
+    registerEntity(std::make_shared<Entity>(
+        "Vehicle", "Vehicle", "vehicle_id",
+        std::vector<ColumnDef>{
+            {"description", "Description", "VARCHAR", true, true, true, true},
+            {"customer_id", "Owner", "VARCHAR", false, false, false, true},
+            {"vin", "VIN", "VARCHAR", true, false, false, true},
+            {"year", "Year", "SMALLINT", false, false, false, true},
+            {"make", "Make", "VARCHAR", false, false, false, true},
+            {"model", "Model", "VARCHAR", false, false, false, true},
+            {"license_plate", "License Plate", "VARCHAR", false, false, false, true},
+            {"notes", "Notes", "TEXT", false, false, false, true},
+            {"vehicle_id", "Vehicle ID", "SMALLINT", false, false, false, true}
+        }
+    ));
+
+    // Job entity
+    registerEntity(std::make_shared<Entity>(
+        "Job", "Job", "job_id",
+        std::vector<ColumnDef>{
+            {"service_description", "Service Description", "TEXT", true, true, true, true},
+            {"customer_id", "Customer", "VARCHAR", false, false, false, true},
+            {"vehicle_id", "Vehicle", "SMALLINT", false, false, false, true},
+            {"status", "Status", "VARCHAR", true, false, false, true},
+            {"created_date", "Created", "DATE", false, false, false, true},
+            {"started_date", "Started", "DATE", false, false, false, true},
+            {"completed_date", "Completed", "DATE", false, false, false, true},
+            {"estimated_cost", "Estimated Cost", "FLOAT", false, false, false, true},
+            {"actual_cost", "Actual Cost", "FLOAT", false, false, false, true},
+            {"notes", "Notes", "TEXT", false, false, false, true},
+            {"job_id", "Job ID", "SMALLINT", false, false, false, true}
+        }
+    ));
+
+    // JobPurchase entity (join table)
+    registerEntity(std::make_shared<Entity>(
+        "JobPurchase", "JobPurchase", "",
+        std::vector<ColumnDef>{
+            {"job_id", "Job ID", "SMALLINT", false, false, false, true},
+            {"order_id", "Order ID", "SMALLINT", false, false, false, true}
+        }
+    ));
+
     // Product entity
     registerEntity(std::make_shared<Entity>(
         "Product", "Product", "product_id",

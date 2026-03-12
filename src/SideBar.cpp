@@ -10,6 +10,9 @@ SideBar::SideBar()
     addButton("\xF0\x9F\x93\x8B", "Orders", "orders");          // clipboard icon
     addButton("\xF0\x9F\x93\xA6", "Products", "products");      // package icon
     addSeparator();
+    addButton("\xF0\x9F\x94\xA7", "Jobs", "jobs");              // wrench icon
+    addButton("\xF0\x9F\x9A\x9B", "Vehicles", "vehicles");      // truck icon
+    addSeparator();
     addButton("\xE2\x9A\x99", "Settings", "settings");          // gear icon
 }
 
