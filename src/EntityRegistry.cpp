@@ -67,6 +67,18 @@ void EntityRegistry::initializeEntities() {
         }
     ));
 
+    // OrderDetail entity (line items)
+    registerEntity(std::make_shared<Entity>(
+        "OrderDetail", "OrderDetail", "",
+        std::vector<ColumnDef>{
+            {"order_id", "Order ID", "SMALLINT", false, false, false, true},
+            {"product_id", "Product ID", "SMALLINT", false, false, false, true},
+            {"unit_price", "Unit Price", "FLOAT", false, false, false, true},
+            {"quantity", "Quantity", "SMALLINT", false, false, false, true},
+            {"discount", "Discount", "FLOAT", false, false, false, true}
+        }
+    ));
+
     // Product entity
     registerEntity(std::make_shared<Entity>(
         "Product", "Product", "product_id",

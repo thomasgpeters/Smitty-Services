@@ -633,6 +633,162 @@ body {
     padding: 8px 0;
 }
 
+/* ===== ORDER LINES (inline table in dialog) ===== */
+.order-lines-section {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1.5px solid #e8eaed;
+}
+
+.order-lines-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.order-lines-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.order-lines-add-btn {
+    padding: 6px 14px;
+    background: #e8eaed;
+    color: #3c4043;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.order-lines-add-btn:hover {
+    background: #dadce0;
+}
+
+.order-lines-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.order-lines-filter-combo {
+    flex: 1;
+    padding: 7px 10px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 12px;
+    background: #f8f9fb;
+    outline: none;
+}
+
+.order-lines-filter-combo:focus {
+    border-color: #4fc3f7;
+    background: #ffffff;
+}
+
+.order-lines-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #f8f9fb;
+    border-radius: 8px;
+    border: 1.5px solid #e8eaed;
+    overflow: hidden;
+}
+
+.order-lines-table th {
+    background: #eef0f4;
+    color: #5f6368;
+    font-weight: 600;
+    font-size: 11px;
+    padding: 8px 10px;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.order-lines-table td {
+    padding: 6px 8px;
+    font-size: 13px;
+    border-bottom: 1px solid #eef0f4;
+    vertical-align: middle;
+}
+
+.order-lines-table tr:last-child td {
+    border-bottom: none;
+}
+
+.line-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 12px;
+    background: #ffffff;
+    outline: none;
+}
+
+.line-input:focus {
+    border-color: #4fc3f7;
+}
+
+.line-combo {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 12px;
+    background: #ffffff;
+    outline: none;
+}
+
+.line-remove-btn {
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    color: #d93025;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.line-remove-btn:hover {
+    background: #fce8e6;
+    border-color: #d93025;
+}
+
+.order-lines-empty {
+    text-align: center;
+    color: #9aa0a6;
+    font-size: 13px;
+    padding: 16px;
+    font-style: italic;
+}
+
+/* ===== LIST FILTER DROPDOWNS ===== */
+.filter-combo {
+    padding: 8px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    background: #f8f9fb;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-combo:focus {
+    border-color: #4fc3f7;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
+}
+
 /* ===== SETTINGS ===== */
 .settings-section {
     max-width: 640px;

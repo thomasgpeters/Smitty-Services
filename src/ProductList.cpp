@@ -35,6 +35,25 @@ protected:
     }
 
     void addCustomFilters(Wt::WContainerWidget* filterBar) override {
+        // Category filter dropdown
+        categoryFilterCombo_ = filterBar->addWidget(std::make_unique<Wt::WComboBox>());
+        categoryFilterCombo_->setStyleClass("filter-combo");
+        categoryFilterCombo_->addItem("All Categories");
+        for (const auto& pair : categoryNames_) {
+            categoryFilterCombo_->addItem(pair.second);
+        }
+        categoryFilterCombo_->changed().connect(this, &EntityListView::refresh);
+
+        // Supplier filter dropdown
+        supplierFilterCombo_ = filterBar->addWidget(std::make_unique<Wt::WComboBox>());
+        supplierFilterCombo_->setStyleClass("filter-combo");
+        supplierFilterCombo_->addItem("All Suppliers");
+        for (const auto& pair : supplierNames_) {
+            supplierFilterCombo_->addItem(pair.second);
+        }
+        supplierFilterCombo_->changed().connect(this, &EntityListView::refresh);
+
+        // Pending Receipt checkbox
         pendingReceiptCheck_ = filterBar->addWidget(
             std::make_unique<Wt::WCheckBox>("Pending Receipt"));
         pendingReceiptCheck_->setStyleClass("filter-checkbox");
@@ -54,20 +73,58 @@ protected:
     }
 
     bool filterRecord(const json& record) const override {
-        if (!pendingReceiptCheck_ || !pendingReceiptCheck_->isChecked())
-            return true;
-
         if (!record.contains("attributes")) return false;
         const auto& attrs = record["attributes"];
-        if (attrs.contains("units_on_order") && !attrs["units_on_order"].is_null()) {
-            try {
-                int onOrder = attrs["units_on_order"].get<int>();
-                return onOrder > 0;
-            } catch (...) {
+
+        // Category filter
+        if (categoryFilterCombo_ && categoryFilterCombo_->currentIndex() > 0) {
+            std::string selectedCatName = categoryFilterCombo_->currentText().toUTF8();
+            std::string selectedCatId;
+            for (const auto& pair : categoryNames_) {
+                if (pair.second == selectedCatName) { selectedCatId = pair.first; break; }
+            }
+            if (!selectedCatId.empty()) {
+                std::string recordCatId;
+                if (attrs.contains("category_id") && !attrs["category_id"].is_null())
+                    recordCatId = attrs["category_id"].is_string()
+                        ? attrs["category_id"].get<std::string>()
+                        : attrs["category_id"].dump();
+                if (recordCatId != selectedCatId) return false;
+            }
+        }
+
+        // Supplier filter
+        if (supplierFilterCombo_ && supplierFilterCombo_->currentIndex() > 0) {
+            std::string selectedSupName = supplierFilterCombo_->currentText().toUTF8();
+            std::string selectedSupId;
+            for (const auto& pair : supplierNames_) {
+                if (pair.second == selectedSupName) { selectedSupId = pair.first; break; }
+            }
+            if (!selectedSupId.empty()) {
+                std::string recordSupId;
+                if (attrs.contains("supplier_id") && !attrs["supplier_id"].is_null())
+                    recordSupId = attrs["supplier_id"].is_string()
+                        ? attrs["supplier_id"].get<std::string>()
+                        : attrs["supplier_id"].dump();
+                if (recordSupId != selectedSupId) return false;
+            }
+        }
+
+        // Pending Receipt filter
+        if (pendingReceiptCheck_ && pendingReceiptCheck_->isChecked()) {
+            if (attrs.contains("units_on_order") && !attrs["units_on_order"].is_null()) {
+                try {
+                    int onOrder = attrs["units_on_order"].get<int>();
+                    if (onOrder <= 0) return false;
+                } catch (...) {
+                    return false;
+                }
+            } else {
                 return false;
             }
         }
-        return false;
+
+        return true;
     }
 
 private:
@@ -297,6 +354,8 @@ private:
     }
 
     Wt::WCheckBox* pendingReceiptCheck_;
+    Wt::WComboBox* categoryFilterCombo_ = nullptr;
+    Wt::WComboBox* supplierFilterCombo_ = nullptr;
     std::map<std::string, std::string> categoryNames_;
     std::map<std::string, std::string> supplierNames_;
 };

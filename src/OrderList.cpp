@@ -10,7 +10,19 @@
 #include <Wt/WComboBox.h>
 #include <Wt/WText.h>
 #include <Wt/WAnchor.h>
+#include <Wt/WTable.h>
+#include <Wt/WContainerWidget.h>
 #include <map>
+#include <vector>
+#include <algorithm>
+
+struct ProductInfo {
+    std::string id;
+    std::string name;
+    std::string categoryId;
+    std::string supplierId;
+    double unitPrice = 0.0;
+};
 
 class OrderList : public EntityListView {
 public:
@@ -39,7 +51,6 @@ protected:
     bool customRenderCell(Wt::WTableCell* cell, const json& record,
                            const ColumnDef& col, const std::string& value) override {
         if (col.name == "customer_id") {
-            // Get the customer ID for the detail link
             std::string custId = getCustomerIdFromRecord(record);
             auto link = cell->addWidget(std::make_unique<Wt::WText>(value));
             link->setStyleClass("cell-link");
@@ -54,6 +65,25 @@ protected:
     }
 
     void addCustomFilters(Wt::WContainerWidget* filterBar) override {
+        // Customer filter dropdown
+        customerFilterCombo_ = filterBar->addWidget(std::make_unique<Wt::WComboBox>());
+        customerFilterCombo_->setStyleClass("filter-combo");
+        customerFilterCombo_->addItem("All Customers");
+        for (const auto& pair : customerNames_) {
+            customerFilterCombo_->addItem(pair.second);
+        }
+        customerFilterCombo_->changed().connect(this, &EntityListView::refresh);
+
+        // Employee filter dropdown
+        employeeFilterCombo_ = filterBar->addWidget(std::make_unique<Wt::WComboBox>());
+        employeeFilterCombo_->setStyleClass("filter-combo");
+        employeeFilterCombo_->addItem("All Employees");
+        for (const auto& pair : employeeNames_) {
+            employeeFilterCombo_->addItem(pair.second);
+        }
+        employeeFilterCombo_->changed().connect(this, &EntityListView::refresh);
+
+        // Unpaid Orders checkbox
         unpaidCheck_ = filterBar->addWidget(
             std::make_unique<Wt::WCheckBox>("Unpaid Orders"));
         unpaidCheck_->setStyleClass("filter-checkbox");
@@ -68,16 +98,52 @@ protected:
     }
 
     bool filterRecord(const json& record) const override {
-        if (!unpaidCheck_ || !unpaidCheck_->isChecked())
-            return true;
-
         if (!record.contains("attributes")) return false;
         const auto& attrs = record["attributes"];
 
-        bool shipped = attrs.contains("shipped_date")
-            && !attrs["shipped_date"].is_null()
-            && attrs["shipped_date"].get<std::string>() != "";
-        return !shipped;
+        // Customer filter
+        if (customerFilterCombo_ && customerFilterCombo_->currentIndex() > 0) {
+            std::string selectedCustName = customerFilterCombo_->currentText().toUTF8();
+            std::string selectedCustId;
+            for (const auto& pair : customerNames_) {
+                if (pair.second == selectedCustName) { selectedCustId = pair.first; break; }
+            }
+            if (!selectedCustId.empty()) {
+                std::string recordCustId;
+                if (attrs.contains("customer_id") && !attrs["customer_id"].is_null())
+                    recordCustId = attrs["customer_id"].is_string()
+                        ? attrs["customer_id"].get<std::string>()
+                        : attrs["customer_id"].dump();
+                if (recordCustId != selectedCustId) return false;
+            }
+        }
+
+        // Employee filter
+        if (employeeFilterCombo_ && employeeFilterCombo_->currentIndex() > 0) {
+            std::string selectedEmpName = employeeFilterCombo_->currentText().toUTF8();
+            std::string selectedEmpId;
+            for (const auto& pair : employeeNames_) {
+                if (pair.second == selectedEmpName) { selectedEmpId = pair.first; break; }
+            }
+            if (!selectedEmpId.empty()) {
+                std::string recordEmpId;
+                if (attrs.contains("employee_id") && !attrs["employee_id"].is_null())
+                    recordEmpId = attrs["employee_id"].is_string()
+                        ? attrs["employee_id"].get<std::string>()
+                        : attrs["employee_id"].dump();
+                if (recordEmpId != selectedEmpId) return false;
+            }
+        }
+
+        // Unpaid filter
+        if (unpaidCheck_ && unpaidCheck_->isChecked()) {
+            bool shipped = attrs.contains("shipped_date")
+                && !attrs["shipped_date"].is_null()
+                && attrs["shipped_date"].get<std::string>() != "";
+            if (shipped) return false;
+        }
+
+        return true;
     }
 
 private:
@@ -122,10 +188,76 @@ private:
                 }
             }
         } catch (...) {}
+
+        // Load products for order lines
+        try {
+            auto resp = ApiClient::instance().fetchAll("Product");
+            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
+                for (const auto& prod : resp.data()) {
+                    ProductInfo pi;
+                    pi.id = prod.contains("id")
+                        ? (prod["id"].is_string() ? prod["id"].get<std::string>() : prod["id"].dump())
+                        : "";
+                    if (prod.contains("attributes")) {
+                        const auto& attrs = prod["attributes"];
+                        if (attrs.contains("product_name") && !attrs["product_name"].is_null())
+                            pi.name = attrs["product_name"].get<std::string>();
+                        if (attrs.contains("unit_price") && !attrs["unit_price"].is_null()) {
+                            try { pi.unitPrice = attrs["unit_price"].get<double>(); }
+                            catch (...) {}
+                        }
+                        if (attrs.contains("category_id") && !attrs["category_id"].is_null())
+                            pi.categoryId = attrs["category_id"].is_string()
+                                ? attrs["category_id"].get<std::string>()
+                                : attrs["category_id"].dump();
+                        if (attrs.contains("supplier_id") && !attrs["supplier_id"].is_null())
+                            pi.supplierId = attrs["supplier_id"].is_string()
+                                ? attrs["supplier_id"].get<std::string>()
+                                : attrs["supplier_id"].dump();
+                    }
+                    if (!pi.id.empty() && !pi.name.empty()) {
+                        products_.push_back(pi);
+                    }
+                }
+            }
+        } catch (...) {}
+
+        // Load categories for line item filters
+        try {
+            auto resp = ApiClient::instance().fetchAll("Category");
+            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
+                for (const auto& cat : resp.data()) {
+                    std::string id = cat.contains("id")
+                        ? (cat["id"].is_string() ? cat["id"].get<std::string>() : cat["id"].dump())
+                        : "";
+                    std::string name;
+                    if (cat.contains("attributes") && cat["attributes"].contains("category_name"))
+                        name = cat["attributes"]["category_name"].get<std::string>();
+                    if (!id.empty() && !name.empty())
+                        categoryNames_[id] = name;
+                }
+            }
+        } catch (...) {}
+
+        // Load suppliers for line item filters
+        try {
+            auto resp = ApiClient::instance().fetchAll("Supplier");
+            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
+                for (const auto& sup : resp.data()) {
+                    std::string id = sup.contains("id")
+                        ? (sup["id"].is_string() ? sup["id"].get<std::string>() : sup["id"].dump())
+                        : "";
+                    std::string name;
+                    if (sup.contains("attributes") && sup["attributes"].contains("company_name"))
+                        name = sup["attributes"]["company_name"].get<std::string>();
+                    if (!id.empty() && !name.empty())
+                        supplierNames_[id] = name;
+                }
+            }
+        } catch (...) {}
     }
 
     std::string getCustomerIdFromRecord(const json& record) const {
-        // Try relationship data first
         if (record.contains("relationships")) {
             const auto& rels = record["relationships"];
             if (rels.contains("customer") && rels["customer"].contains("data")
@@ -138,7 +270,6 @@ private:
                 }
             }
         }
-        // Fallback to attribute
         if (record.contains("attributes")) {
             const auto& attrs = record["attributes"];
             if (attrs.contains("customer_id") && !attrs["customer_id"].is_null()) {
@@ -152,7 +283,6 @@ private:
 
     std::string lookupRelationship(const json& record, const std::string& relName,
                                     const std::string& attr1, const std::string& attr2) const {
-        // Try JSONAPI included relationships first
         if (record.contains("relationships")) {
             const auto& rels = record["relationships"];
             if (rels.contains(relName) && rels[relName].contains("data")
@@ -190,7 +320,6 @@ private:
             }
         }
 
-        // Fallback to pre-fetched lookups
         if (record.contains("attributes")) {
             const auto& attrs = record["attributes"];
             std::string fieldName = relName + "_id";
@@ -257,9 +386,39 @@ private:
         dialog->show();
     }
 
+    // Rebuild the product combo based on selected category/supplier filters
+    void rebuildProductCombo(Wt::WComboBox* productCombo,
+                             Wt::WComboBox* catFilter,
+                             Wt::WComboBox* supFilter) {
+        productCombo->clear();
+        productCombo->addItem("");
+
+        std::string selectedCat;
+        if (catFilter->currentIndex() > 0) {
+            std::string catName = catFilter->currentText().toUTF8();
+            for (const auto& pair : categoryNames_) {
+                if (pair.second == catName) { selectedCat = pair.first; break; }
+            }
+        }
+
+        std::string selectedSup;
+        if (supFilter->currentIndex() > 0) {
+            std::string supName = supFilter->currentText().toUTF8();
+            for (const auto& pair : supplierNames_) {
+                if (pair.second == supName) { selectedSup = pair.first; break; }
+            }
+        }
+
+        for (const auto& prod : products_) {
+            if (!selectedCat.empty() && prod.categoryId != selectedCat) continue;
+            if (!selectedSup.empty() && prod.supplierId != selectedSup) continue;
+            productCombo->addItem(prod.name);
+        }
+    }
+
     void showAddOrderDialog() {
         auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Order"));
-        dialog->setStyleClass("smitty-dialog");
+        dialog->setStyleClass("smitty-dialog smitty-dialog-wide");
         dialog->setModal(true);
         dialog->setClosable(true);
         dialog->rejectWhenEscapePressed(true);
@@ -322,6 +481,137 @@ private:
         freightInput->setStyleClass("dialog-input");
         freightInput->setText("0.00");
 
+        // ===== ORDER LINES SECTION =====
+        auto linesSection = content->addWidget(std::make_unique<Wt::WContainerWidget>());
+        linesSection->setStyleClass("order-lines-section");
+
+        // Header with title and Add Line button
+        auto linesHeader = linesSection->addWidget(std::make_unique<Wt::WContainerWidget>());
+        linesHeader->setStyleClass("order-lines-header");
+        linesHeader->addWidget(std::make_unique<Wt::WText>("Order Lines"))
+                   ->setStyleClass("order-lines-title");
+        auto addLineBtn = linesHeader->addWidget(std::make_unique<Wt::WPushButton>("+ Add Line"));
+        addLineBtn->setStyleClass("order-lines-add-btn");
+
+        // Category / Supplier filter row
+        auto filterRow = linesSection->addWidget(std::make_unique<Wt::WContainerWidget>());
+        filterRow->setStyleClass("order-lines-filters");
+
+        auto catFilterCombo = filterRow->addWidget(std::make_unique<Wt::WComboBox>());
+        catFilterCombo->setStyleClass("order-lines-filter-combo");
+        catFilterCombo->addItem("All Categories");
+        for (const auto& pair : categoryNames_) {
+            catFilterCombo->addItem(pair.second);
+        }
+
+        auto supFilterCombo = filterRow->addWidget(std::make_unique<Wt::WComboBox>());
+        supFilterCombo->setStyleClass("order-lines-filter-combo");
+        supFilterCombo->addItem("All Suppliers");
+        for (const auto& pair : supplierNames_) {
+            supFilterCombo->addItem(pair.second);
+        }
+
+        // Lines table
+        auto linesTable = linesSection->addWidget(std::make_unique<Wt::WTable>());
+        linesTable->setStyleClass("order-lines-table");
+        linesTable->setHeaderCount(1);
+        linesTable->elementAt(0, 0)->addWidget(std::make_unique<Wt::WText>("Product"));
+        linesTable->elementAt(0, 1)->addWidget(std::make_unique<Wt::WText>("Unit Price"));
+        linesTable->elementAt(0, 2)->addWidget(std::make_unique<Wt::WText>("Qty"));
+        linesTable->elementAt(0, 3)->addWidget(std::make_unique<Wt::WText>("Discount"));
+        linesTable->elementAt(0, 4)->addWidget(std::make_unique<Wt::WText>(""));
+
+        // Shared line row data structures
+        struct LineRow {
+            Wt::WComboBox* productCombo;
+            Wt::WLineEdit* priceInput;
+            Wt::WLineEdit* qtyInput;
+            Wt::WLineEdit* discountInput;
+            int tableRow;
+        };
+        auto lineRows = std::make_shared<std::vector<LineRow>>();
+
+        // Lambda to add a line row
+        auto addLineRow = [this, linesTable, lineRows, catFilterCombo, supFilterCombo]() {
+            int row = linesTable->rowCount();
+
+            auto productCombo = linesTable->elementAt(row, 0)->addWidget(
+                std::make_unique<Wt::WComboBox>());
+            productCombo->setStyleClass("line-combo");
+            rebuildProductCombo(productCombo, catFilterCombo, supFilterCombo);
+
+            auto priceInput = linesTable->elementAt(row, 1)->addWidget(
+                std::make_unique<Wt::WLineEdit>());
+            priceInput->setStyleClass("line-input");
+            priceInput->setText("0.00");
+
+            auto qtyInput = linesTable->elementAt(row, 2)->addWidget(
+                std::make_unique<Wt::WLineEdit>());
+            qtyInput->setStyleClass("line-input");
+            qtyInput->setText("1");
+
+            auto discountInput = linesTable->elementAt(row, 3)->addWidget(
+                std::make_unique<Wt::WLineEdit>());
+            discountInput->setStyleClass("line-input");
+            discountInput->setText("0");
+
+            auto removeBtn = linesTable->elementAt(row, 4)->addWidget(
+                std::make_unique<Wt::WPushButton>("×"));
+            removeBtn->setStyleClass("line-remove-btn");
+
+            LineRow lr{productCombo, priceInput, qtyInput, discountInput, row};
+            lineRows->push_back(lr);
+
+            // Auto-fill unit price when product changes
+            productCombo->changed().connect([this, productCombo, priceInput] {
+                std::string prodName = productCombo->currentText().toUTF8();
+                for (const auto& prod : products_) {
+                    if (prod.name == prodName) {
+                        char buf[32];
+                        snprintf(buf, sizeof(buf), "%.2f", prod.unitPrice);
+                        priceInput->setText(buf);
+                        break;
+                    }
+                }
+            });
+
+            // Remove row
+            removeBtn->clicked().connect([linesTable, lineRows, row] {
+                // Hide the row instead of deleting (simpler with Wt tables)
+                for (int c = 0; c < 5; c++) {
+                    linesTable->elementAt(row, c)->hide();
+                }
+                // Mark as removed by clearing the product combo
+                for (auto& lr : *lineRows) {
+                    if (lr.tableRow == row) {
+                        lr.productCombo = nullptr;
+                        break;
+                    }
+                }
+            });
+        };
+
+        addLineBtn->clicked().connect(addLineRow);
+
+        // When category or supplier filter changes, rebuild product combos in all visible rows
+        auto rebuildAllProductCombos = [this, lineRows, catFilterCombo, supFilterCombo] {
+            for (auto& lr : *lineRows) {
+                if (lr.productCombo) {
+                    std::string currentSelection = lr.productCombo->currentText().toUTF8();
+                    rebuildProductCombo(lr.productCombo, catFilterCombo, supFilterCombo);
+                    // Try to restore selection
+                    for (int i = 0; i < lr.productCombo->count(); i++) {
+                        if (lr.productCombo->itemText(i).toUTF8() == currentSelection) {
+                            lr.productCombo->setCurrentIndex(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+        catFilterCombo->changed().connect(rebuildAllProductCombos);
+        supFilterCombo->changed().connect(rebuildAllProductCombos);
+
         // Status message
         auto statusMsg = content->addWidget(std::make_unique<Wt::WText>());
         statusMsg->setStyleClass("dialog-status");
@@ -370,6 +660,57 @@ private:
             try {
                 auto resp = ApiClient::instance().createRecord("Order", attrs);
                 if (resp.ok()) {
+                    // Get new order ID from response
+                    std::string newOrderId;
+                    if (resp.hasData()) {
+                        const auto& data = resp.data();
+                        if (data.contains("id")) {
+                            newOrderId = data["id"].is_string()
+                                ? data["id"].get<std::string>()
+                                : data["id"].dump();
+                        }
+                    }
+
+                    // Save each order line
+                    if (!newOrderId.empty()) {
+                        for (const auto& lr : *lineRows) {
+                            if (!lr.productCombo) continue; // removed row
+                            std::string prodName = lr.productCombo->currentText().toUTF8();
+                            if (prodName.empty()) continue;
+
+                            // Find product ID
+                            std::string productId;
+                            for (const auto& prod : products_) {
+                                if (prod.name == prodName) {
+                                    productId = prod.id;
+                                    break;
+                                }
+                            }
+                            if (productId.empty()) continue;
+
+                            json lineAttrs;
+                            try { lineAttrs["order_id"] = std::stoi(newOrderId); }
+                            catch (...) { lineAttrs["order_id"] = newOrderId; }
+                            try { lineAttrs["product_id"] = std::stoi(productId); }
+                            catch (...) { lineAttrs["product_id"] = productId; }
+
+                            if (!lr.priceInput->text().empty()) {
+                                try { lineAttrs["unit_price"] = std::stod(lr.priceInput->text().toUTF8()); }
+                                catch (...) { lineAttrs["unit_price"] = 0.0; }
+                            }
+                            if (!lr.qtyInput->text().empty()) {
+                                try { lineAttrs["quantity"] = std::stoi(lr.qtyInput->text().toUTF8()); }
+                                catch (...) { lineAttrs["quantity"] = 1; }
+                            }
+                            if (!lr.discountInput->text().empty()) {
+                                try { lineAttrs["discount"] = std::stod(lr.discountInput->text().toUTF8()); }
+                                catch (...) { lineAttrs["discount"] = 0.0; }
+                            }
+
+                            ApiClient::instance().createRecord("OrderDetail", lineAttrs);
+                        }
+                    }
+
                     dialog->accept();
                     refresh();
                 } else {
@@ -388,8 +729,13 @@ private:
     }
 
     Wt::WCheckBox* unpaidCheck_;
+    Wt::WComboBox* customerFilterCombo_ = nullptr;
+    Wt::WComboBox* employeeFilterCombo_ = nullptr;
     std::map<std::string, std::string> customerNames_;
     std::map<std::string, std::string> employeeNames_;
+    std::map<std::string, std::string> categoryNames_;
+    std::map<std::string, std::string> supplierNames_;
+    std::vector<ProductInfo> products_;
 };
 
 std::unique_ptr<EntityListView> createOrderList() {
