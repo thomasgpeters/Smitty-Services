@@ -165,6 +165,7 @@ private:
         auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Product"));
         dialog->setStyleClass("smitty-dialog");
         dialog->setModal(true);
+        dialog->setClosable(true);
         dialog->rejectWhenEscapePressed(true);
 
         auto content = dialog->contents();
@@ -232,10 +233,6 @@ private:
 
         auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
         saveBtn->setStyleClass("action-btn");
-
-        auto cancelBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Cancel"));
-        cancelBtn->setStyleClass("action-btn action-btn-secondary");
-        cancelBtn->clicked().connect(dialog, &Wt::WDialog::reject);
 
         saveBtn->clicked().connect([=] {
             if (nameInput->text().empty()) {

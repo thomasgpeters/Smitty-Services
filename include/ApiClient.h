@@ -32,6 +32,8 @@ public:
                          const std::string& include = "");
     ApiResponse fetchOne(const std::string& resource, const std::string& id);
     ApiResponse createRecord(const std::string& resource, const json& attributes);
+    ApiResponse updateRecord(const std::string& resource, const std::string& id, const json& attributes);
+    ApiResponse deleteRecord(const std::string& resource, const std::string& id);
 
     void setBaseUrl(const std::string& url);
     std::string getBaseUrl() const;
@@ -45,6 +47,8 @@ private:
     // Raw HTTP with status code capture
     ApiResponse httpGet(const std::string& url);
     ApiResponse httpPost(const std::string& url, const std::string& body);
+    ApiResponse httpPatch(const std::string& url, const std::string& body);
+    ApiResponse httpDelete(const std::string& url);
 
     // Parse and validate JSONAPI response body
     ApiResponse parseResponse(const std::string& rawBody, long httpStatus, const std::string& url);

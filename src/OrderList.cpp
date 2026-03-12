@@ -216,6 +216,7 @@ private:
         auto dialog = addChild(std::make_unique<Wt::WDialog>("Customer Detail"));
         dialog->setStyleClass("smitty-dialog smitty-dialog-wide");
         dialog->setModal(true);
+        dialog->setClosable(true);
         dialog->rejectWhenEscapePressed(true);
 
         auto content = dialog->contents();
@@ -249,13 +250,6 @@ private:
                 std::string("Error: ") + e.what(), Wt::TextFormat::Plain));
         }
 
-        auto btnBar = content->addWidget(std::make_unique<Wt::WContainerWidget>());
-        btnBar->setStyleClass("dialog-buttons");
-
-        auto closeBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Close"));
-        closeBtn->setStyleClass("action-btn");
-        closeBtn->clicked().connect(dialog, &Wt::WDialog::accept);
-
         dialog->finished().connect([this, dialog](Wt::DialogCode) {
             removeChild(dialog);
         });
@@ -267,6 +261,7 @@ private:
         auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Order"));
         dialog->setStyleClass("smitty-dialog");
         dialog->setModal(true);
+        dialog->setClosable(true);
         dialog->rejectWhenEscapePressed(true);
 
         auto content = dialog->contents();
@@ -337,10 +332,6 @@ private:
 
         auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
         saveBtn->setStyleClass("action-btn");
-
-        auto cancelBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Cancel"));
-        cancelBtn->setStyleClass("action-btn action-btn-secondary");
-        cancelBtn->clicked().connect(dialog, &Wt::WDialog::reject);
 
         saveBtn->clicked().connect([=] {
             if (custCombo->currentText().empty()) {
