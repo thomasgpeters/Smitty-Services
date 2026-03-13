@@ -97,7 +97,7 @@ CREATE TABLE employees (
     extension character varying(4),
     photo bytea,
     notes text,
-    reports_to smallint REFERENCES employees(employee_id),
+    reports_to smallint REFERENCES employees(employee_id) DEFERRABLE INITIALLY DEFERRED,
     photo_path character varying(255)
 );
 

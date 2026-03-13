@@ -10,6 +10,9 @@ TRUNCATE TABLE order_details, orders, products, categories, suppliers,
                customers, us_states
     CASCADE;
 
+BEGIN;
+SET CONSTRAINTS ALL DEFERRED;
+
 --
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -3456,3 +3459,4 @@ INSERT INTO us_states VALUES (49, 'West Virginia', 'WV', 'south');
 INSERT INTO us_states VALUES (50, 'Wisconsin', 'WI', 'midwest');
 INSERT INTO us_states VALUES (51, 'Wyoming', 'WY', 'west');
 
+COMMIT;
