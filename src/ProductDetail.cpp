@@ -4,12 +4,14 @@
 #include <Wt/WText.h>
 #include <Wt/WLineEdit.h>
 #include <Wt/WPushButton.h>
+#include <Wt/WComboBox.h>
 #include <map>
 
 class ProductDetail : public EntityDetailView {
 public:
     ProductDetail()
         : EntityDetailView(EntityRegistry::instance().getEntity("Product")) {
+        loadLookups();
     }
 
 protected:
@@ -29,6 +31,50 @@ protected:
                 auto value = group->addWidget(std::make_unique<Wt::WText>(
                     val.empty() ? "-" : val, Wt::TextFormat::Plain));
                 value->setStyleClass("form-value");
+            } else if (col.name == "category_id") {
+                auto combo = group->addWidget(std::make_unique<Wt::WComboBox>());
+                combo->setStyleClass("form-input");
+                combo->addItem("");
+                int selectIdx = 0, idx = 1;
+                for (const auto& pair : categoryNames_) {
+                    combo->addItem(pair.second);
+                    if (pair.first == val) selectIdx = idx;
+                    idx++;
+                }
+                combo->setCurrentIndex(selectIdx);
+                auto hidden = group->addWidget(std::make_unique<Wt::WLineEdit>());
+                hidden->setHidden(true);
+                hidden->setText(val);
+                fieldEdits_[col.name] = hidden;
+                combo->changed().connect([combo, hidden, this] {
+                    std::string name = combo->currentText().toUTF8();
+                    for (const auto& pair : categoryNames_) {
+                        if (pair.second == name) { hidden->setText(pair.first); return; }
+                    }
+                    hidden->setText("");
+                });
+            } else if (col.name == "supplier_id") {
+                auto combo = group->addWidget(std::make_unique<Wt::WComboBox>());
+                combo->setStyleClass("form-input");
+                combo->addItem("");
+                int selectIdx = 0, idx = 1;
+                for (const auto& pair : supplierNames_) {
+                    combo->addItem(pair.second);
+                    if (pair.first == val) selectIdx = idx;
+                    idx++;
+                }
+                combo->setCurrentIndex(selectIdx);
+                auto hidden = group->addWidget(std::make_unique<Wt::WLineEdit>());
+                hidden->setHidden(true);
+                hidden->setText(val);
+                fieldEdits_[col.name] = hidden;
+                combo->changed().connect([combo, hidden, this] {
+                    std::string name = combo->currentText().toUTF8();
+                    for (const auto& pair : supplierNames_) {
+                        if (pair.second == name) { hidden->setText(pair.first); return; }
+                    }
+                    hidden->setText("");
+                });
             } else {
                 auto input = group->addWidget(std::make_unique<Wt::WLineEdit>());
                 input->setStyleClass("form-input");
@@ -50,7 +96,101 @@ protected:
         saveBtn->clicked().connect(this, &ProductDetail::saveRecord);
     }
 
+    bool customEditField(Wt::WContainerWidget* content, const ColumnDef& col,
+                          const std::string& value,
+                          std::map<std::string, Wt::WLineEdit*>& fieldMap) override {
+        if (col.name == "category_id") {
+            content->addWidget(std::make_unique<Wt::WText>("Category"))
+                   ->setStyleClass("dialog-label");
+            auto combo = content->addWidget(std::make_unique<Wt::WComboBox>());
+            combo->setStyleClass("dialog-input");
+            combo->addItem("");
+            int selectIdx = 0, idx = 1;
+            for (const auto& pair : categoryNames_) {
+                combo->addItem(pair.second);
+                if (pair.first == value) selectIdx = idx;
+                idx++;
+            }
+            combo->setCurrentIndex(selectIdx);
+            auto hidden = content->addWidget(std::make_unique<Wt::WLineEdit>());
+            hidden->setHidden(true);
+            hidden->setText(value);
+            fieldMap[col.name] = hidden;
+            combo->changed().connect([combo, hidden, this] {
+                std::string name = combo->currentText().toUTF8();
+                for (const auto& pair : categoryNames_) {
+                    if (pair.second == name) { hidden->setText(pair.first); return; }
+                }
+                hidden->setText("");
+            });
+            return true;
+        }
+
+        if (col.name == "supplier_id") {
+            content->addWidget(std::make_unique<Wt::WText>("Supplier"))
+                   ->setStyleClass("dialog-label");
+            auto combo = content->addWidget(std::make_unique<Wt::WComboBox>());
+            combo->setStyleClass("dialog-input");
+            combo->addItem("");
+            int selectIdx = 0, idx = 1;
+            for (const auto& pair : supplierNames_) {
+                combo->addItem(pair.second);
+                if (pair.first == value) selectIdx = idx;
+                idx++;
+            }
+            combo->setCurrentIndex(selectIdx);
+            auto hidden = content->addWidget(std::make_unique<Wt::WLineEdit>());
+            hidden->setHidden(true);
+            hidden->setText(value);
+            fieldMap[col.name] = hidden;
+            combo->changed().connect([combo, hidden, this] {
+                std::string name = combo->currentText().toUTF8();
+                for (const auto& pair : supplierNames_) {
+                    if (pair.second == name) { hidden->setText(pair.first); return; }
+                }
+                hidden->setText("");
+            });
+            return true;
+        }
+
+        return false;
+    }
+
 private:
+    void loadLookups() {
+        try {
+            auto resp = ApiClient::instance().fetchAll("Category");
+            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
+                for (const auto& cat : resp.data()) {
+                    std::string id = cat.contains("id")
+                        ? (cat["id"].is_string() ? cat["id"].get<std::string>() : cat["id"].dump())
+                        : "";
+                    std::string name;
+                    if (cat.contains("attributes") && cat["attributes"].contains("category_name"))
+                        name = cat["attributes"]["category_name"].get<std::string>();
+                    if (!id.empty() && !name.empty())
+                        categoryNames_[id] = name;
+                }
+            }
+        } catch (...) {}
+
+        try {
+            auto resp = ApiClient::instance().fetchAll("Supplier");
+            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
+                for (const auto& sup : resp.data()) {
+                    std::string id = sup.contains("id")
+                        ? (sup["id"].is_string() ? sup["id"].get<std::string>() : sup["id"].dump())
+                        : "";
+                    std::string name;
+                    if (sup.contains("attributes") && sup["attributes"].contains("company_name"))
+                        name = sup["attributes"]["company_name"].get<std::string>();
+                    if (!id.empty() && !name.empty())
+                        supplierNames_[id] = name;
+                }
+            }
+        } catch (...) {}
+    }
+
     void saveRecord() {
         json attrs;
         for (const auto& col : entity_->columns()) {
@@ -90,6 +230,8 @@ private:
 
     std::map<std::string, Wt::WLineEdit*> fieldEdits_;
     Wt::WText* saveStatus_ = nullptr;
+    std::map<std::string, std::string> categoryNames_;
+    std::map<std::string, std::string> supplierNames_;
 };
 
 std::unique_ptr<EntityDetailView> createProductDetail() {
