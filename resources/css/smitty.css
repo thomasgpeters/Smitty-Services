@@ -380,6 +380,45 @@ body {
     border-radius: 8px;
 }
 
+.form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #ffffff;
+}
+
+.form-input:focus {
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
+}
+
+.detail-save-bar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1.5px solid #e8eaed;
+}
+
+.detail-save-status {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.detail-save-success {
+    color: #1e8e3e;
+}
+
+.detail-save-error {
+    color: #d93025;
+}
+
 .back-btn {
     padding: 9px 20px;
     background: #16213e;
@@ -546,7 +585,7 @@ body {
     overflow: hidden;
     background: #ffffff;
     min-width: 420px;
-    max-width: 640px;
+    max-width: 760px;
 }
 
 .smitty-dialog-wide .Wt-dialog {
@@ -613,6 +652,19 @@ body {
     max-height: 70vh;
     overflow-y: auto;
     background: #ffffff;
+}
+
+/* 3-column grid layout for dialog fields */
+.dialog-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0 20px;
+}
+
+.dialog-field-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
 }
 
 .dialog-label {

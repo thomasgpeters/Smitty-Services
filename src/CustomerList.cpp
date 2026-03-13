@@ -86,61 +86,60 @@ private:
         auto content = dialog->contents();
         content->setStyleClass("dialog-content");
 
-        // Company Name
-        content->addWidget(std::make_unique<Wt::WText>("Company Name"))
+        // 3-column grid for fields
+        auto grid = content->addWidget(std::make_unique<Wt::WContainerWidget>());
+        grid->setStyleClass("dialog-content-grid");
+
+        // Customer ID (required - varchar(5))
+        auto idGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        idGroup->setStyleClass("dialog-field-group");
+        idGroup->addWidget(std::make_unique<Wt::WText>("Customer ID"))
                ->setStyleClass("dialog-label");
-        auto companyInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto idInput = idGroup->addWidget(std::make_unique<Wt::WLineEdit>());
+        idInput->setStyleClass("dialog-input");
+        idInput->setMaxLength(5);
+
+        // Company Name (required)
+        auto companyGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        companyGroup->setStyleClass("dialog-field-group");
+        companyGroup->addWidget(std::make_unique<Wt::WText>("Company Name"))
+               ->setStyleClass("dialog-label");
+        auto companyInput = companyGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         companyInput->setStyleClass("dialog-input");
 
         // Contact Name
-        content->addWidget(std::make_unique<Wt::WText>("Contact Name"))
+        auto contactGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        contactGroup->setStyleClass("dialog-field-group");
+        contactGroup->addWidget(std::make_unique<Wt::WText>("Contact Name"))
                ->setStyleClass("dialog-label");
-        auto contactInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto contactInput = contactGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         contactInput->setStyleClass("dialog-input");
 
-        // Contact Title
-        content->addWidget(std::make_unique<Wt::WText>("Contact Title"))
-               ->setStyleClass("dialog-label");
-        auto titleInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        titleInput->setStyleClass("dialog-input");
-
-        // Address
-        content->addWidget(std::make_unique<Wt::WText>("Address"))
-               ->setStyleClass("dialog-label");
-        auto addressInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        addressInput->setStyleClass("dialog-input");
-
         // City
-        content->addWidget(std::make_unique<Wt::WText>("City"))
+        auto cityGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        cityGroup->setStyleClass("dialog-field-group");
+        cityGroup->addWidget(std::make_unique<Wt::WText>("City"))
                ->setStyleClass("dialog-label");
-        auto cityInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto cityInput = cityGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         cityInput->setStyleClass("dialog-input");
 
-        // Region
-        content->addWidget(std::make_unique<Wt::WText>("Region"))
-               ->setStyleClass("dialog-label");
-        auto regionInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        regionInput->setStyleClass("dialog-input");
-
-        // Postal Code
-        content->addWidget(std::make_unique<Wt::WText>("Postal Code"))
-               ->setStyleClass("dialog-label");
-        auto postalInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        postalInput->setStyleClass("dialog-input");
-
         // Country
-        content->addWidget(std::make_unique<Wt::WText>("Country"))
+        auto countryGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        countryGroup->setStyleClass("dialog-field-group");
+        countryGroup->addWidget(std::make_unique<Wt::WText>("Country"))
                ->setStyleClass("dialog-label");
-        auto countryInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto countryInput = countryGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         countryInput->setStyleClass("dialog-input");
 
         // Phone
-        content->addWidget(std::make_unique<Wt::WText>("Phone"))
+        auto phoneGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        phoneGroup->setStyleClass("dialog-field-group");
+        phoneGroup->addWidget(std::make_unique<Wt::WText>("Phone"))
                ->setStyleClass("dialog-label");
-        auto phoneInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto phoneInput = phoneGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         phoneInput->setStyleClass("dialog-input");
 
-        // Status message
+        // Status message (full width, below grid)
         auto statusMsg = content->addWidget(std::make_unique<Wt::WText>());
         statusMsg->setStyleClass("dialog-status");
 
@@ -148,29 +147,26 @@ private:
         auto btnBar = content->addWidget(std::make_unique<Wt::WContainerWidget>());
         btnBar->setStyleClass("dialog-buttons");
 
-        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
+        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Add Customer"));
         saveBtn->setStyleClass("action-btn");
 
         saveBtn->clicked().connect([=] {
+            if (idInput->text().empty()) {
+                statusMsg->setText("Customer ID is required.");
+                return;
+            }
             if (companyInput->text().empty()) {
                 statusMsg->setText("Company Name is required.");
                 return;
             }
 
             json attrs;
+            attrs["customer_id"] = idInput->text().toUTF8();
             attrs["company_name"] = companyInput->text().toUTF8();
             if (!contactInput->text().empty())
                 attrs["contact_name"] = contactInput->text().toUTF8();
-            if (!titleInput->text().empty())
-                attrs["contact_title"] = titleInput->text().toUTF8();
-            if (!addressInput->text().empty())
-                attrs["address"] = addressInput->text().toUTF8();
             if (!cityInput->text().empty())
                 attrs["city"] = cityInput->text().toUTF8();
-            if (!regionInput->text().empty())
-                attrs["region"] = regionInput->text().toUTF8();
-            if (!postalInput->text().empty())
-                attrs["postal_code"] = postalInput->text().toUTF8();
             if (!countryInput->text().empty())
                 attrs["country"] = countryInput->text().toUTF8();
             if (!phoneInput->text().empty())
