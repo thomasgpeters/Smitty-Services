@@ -3,6 +3,8 @@
 #include "ApiClient.h"
 #include <Wt/WText.h>
 #include <Wt/WLineEdit.h>
+#include <Wt/WCheckBox.h>
+#include <Wt/WComboBox.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WComboBox.h>
 #include <map>
@@ -17,6 +19,9 @@ public:
 protected:
     void populateFields(const json& record) override {
         fieldEdits_.clear();
+        discontinuedCheck_ = nullptr;
+        categoryCombo_ = nullptr;
+        supplierCombo_ = nullptr;
 
         for (const auto& col : entity_->columns()) {
             auto group = fieldsContainer_->addWidget(std::make_unique<Wt::WContainerWidget>());
@@ -31,50 +36,40 @@ protected:
                 auto value = group->addWidget(std::make_unique<Wt::WText>(
                     val.empty() ? "-" : val, Wt::TextFormat::Plain));
                 value->setStyleClass("form-value");
+
+            } else if (col.name == "discontinued") {
+                discontinuedCheck_ = group->addWidget(std::make_unique<Wt::WCheckBox>("Yes"));
+                discontinuedCheck_->setStyleClass("filter-checkbox");
+                if (val == "1") {
+                    discontinuedCheck_->setChecked(true);
+                }
+
             } else if (col.name == "category_id") {
-                auto combo = group->addWidget(std::make_unique<Wt::WComboBox>());
-                combo->setStyleClass("form-input");
-                combo->addItem("");
-                int selectIdx = 0, idx = 1;
+                categoryCombo_ = group->addWidget(std::make_unique<Wt::WComboBox>());
+                categoryCombo_->setStyleClass("form-input");
+                categoryCombo_->addItem("");
+                int selectedIdx = 0;
+                int idx = 1;
                 for (const auto& pair : categoryNames_) {
-                    combo->addItem(pair.second);
-                    if (pair.first == val) selectIdx = idx;
+                    categoryCombo_->addItem(pair.second);
+                    if (pair.first == val) selectedIdx = idx;
                     idx++;
                 }
-                combo->setCurrentIndex(selectIdx);
-                auto hidden = group->addWidget(std::make_unique<Wt::WLineEdit>());
-                hidden->setHidden(true);
-                hidden->setText(val);
-                fieldEdits_[col.name] = hidden;
-                combo->changed().connect([combo, hidden, this] {
-                    std::string name = combo->currentText().toUTF8();
-                    for (const auto& pair : categoryNames_) {
-                        if (pair.second == name) { hidden->setText(pair.first); return; }
-                    }
-                    hidden->setText("");
-                });
+                categoryCombo_->setCurrentIndex(selectedIdx);
+
             } else if (col.name == "supplier_id") {
-                auto combo = group->addWidget(std::make_unique<Wt::WComboBox>());
-                combo->setStyleClass("form-input");
-                combo->addItem("");
-                int selectIdx = 0, idx = 1;
+                supplierCombo_ = group->addWidget(std::make_unique<Wt::WComboBox>());
+                supplierCombo_->setStyleClass("form-input");
+                supplierCombo_->addItem("");
+                int selectedIdx = 0;
+                int idx = 1;
                 for (const auto& pair : supplierNames_) {
-                    combo->addItem(pair.second);
-                    if (pair.first == val) selectIdx = idx;
+                    supplierCombo_->addItem(pair.second);
+                    if (pair.first == val) selectedIdx = idx;
                     idx++;
                 }
-                combo->setCurrentIndex(selectIdx);
-                auto hidden = group->addWidget(std::make_unique<Wt::WLineEdit>());
-                hidden->setHidden(true);
-                hidden->setText(val);
-                fieldEdits_[col.name] = hidden;
-                combo->changed().connect([combo, hidden, this] {
-                    std::string name = combo->currentText().toUTF8();
-                    for (const auto& pair : supplierNames_) {
-                        if (pair.second == name) { hidden->setText(pair.first); return; }
-                    }
-                    hidden->setText("");
-                });
+                supplierCombo_->setCurrentIndex(selectedIdx);
+
             } else {
                 auto input = group->addWidget(std::make_unique<Wt::WLineEdit>());
                 input->setStyleClass("form-input");
@@ -193,8 +188,41 @@ private:
 
     void saveRecord() {
         json attrs;
+
+        // Discontinued checkbox
+        if (discontinuedCheck_) {
+            attrs["discontinued"] = discontinuedCheck_->isChecked() ? 1 : 0;
+        }
+
+        // Category dropdown
+        if (categoryCombo_ && categoryCombo_->currentIndex() > 0) {
+            std::string catName = categoryCombo_->currentText().toUTF8();
+            for (const auto& pair : categoryNames_) {
+                if (pair.second == catName) {
+                    try { attrs["category_id"] = std::stoi(pair.first); }
+                    catch (...) { attrs["category_id"] = pair.first; }
+                    break;
+                }
+            }
+        }
+
+        // Supplier dropdown
+        if (supplierCombo_ && supplierCombo_->currentIndex() > 0) {
+            std::string supName = supplierCombo_->currentText().toUTF8();
+            for (const auto& pair : supplierNames_) {
+                if (pair.second == supName) {
+                    try { attrs["supplier_id"] = std::stoi(pair.first); }
+                    catch (...) { attrs["supplier_id"] = pair.first; }
+                    break;
+                }
+            }
+        }
+
+        // Regular text fields
         for (const auto& col : entity_->columns()) {
             if (col.name == entity_->primaryKey()) continue;
+            if (col.name == "discontinued" || col.name == "category_id" || col.name == "supplier_id") continue;
+
             auto it = fieldEdits_.find(col.name);
             if (it == fieldEdits_.end()) continue;
 
@@ -229,6 +257,9 @@ private:
     }
 
     std::map<std::string, Wt::WLineEdit*> fieldEdits_;
+    Wt::WCheckBox* discontinuedCheck_ = nullptr;
+    Wt::WComboBox* categoryCombo_ = nullptr;
+    Wt::WComboBox* supplierCombo_ = nullptr;
     Wt::WText* saveStatus_ = nullptr;
     std::map<std::string, std::string> categoryNames_;
     std::map<std::string, std::string> supplierNames_;
