@@ -1,7 +1,9 @@
 -- ==============================================================================
--- Smitty Services — Seed Data (Northwind dataset)
+-- Smitty Services — Seed Data + Foreign Keys + Indexes
 -- ==============================================================================
--- Safe to re-run: truncates all seeded tables before inserting.
+-- Loads all Northwind seed data, then adds FK constraints and indexes.
+-- FKs are added AFTER data so insert order does not matter.
+-- Safe to re-run: truncates seeded tables before inserting.
 -- ==============================================================================
 
 TRUNCATE TABLE order_details, orders, products, categories, suppliers,
@@ -9,9 +11,6 @@ TRUNCATE TABLE order_details, orders, products, categories, suppliers,
                region, customer_customer_demo, customer_demographics,
                customers, us_states
     CASCADE;
-
-BEGIN;
-SET CONSTRAINTS ALL DEFERRED;
 
 --
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
@@ -3459,4 +3458,87 @@ INSERT INTO us_states VALUES (49, 'West Virginia', 'WV', 'south');
 INSERT INTO us_states VALUES (50, 'Wisconsin', 'WI', 'midwest');
 INSERT INTO us_states VALUES (51, 'Wyoming', 'WY', 'west');
 
-COMMIT;
+
+-- ==============================================================================
+-- Foreign Key Constraints (added after all data is loaded)
+-- ==============================================================================
+
+-- Northwind FKs
+ALTER TABLE ONLY employees
+    ADD CONSTRAINT fk_employees_employees FOREIGN KEY (reports_to) REFERENCES employees(employee_id);
+
+ALTER TABLE ONLY customer_customer_demo
+    ADD CONSTRAINT fk_customer_customer_demo_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+
+ALTER TABLE ONLY customer_customer_demo
+    ADD CONSTRAINT fk_customer_customer_demo_customer_demographics FOREIGN KEY (customer_type_id) REFERENCES customer_demographics(customer_type_id);
+
+ALTER TABLE ONLY territories
+    ADD CONSTRAINT fk_territories_region FOREIGN KEY (region_id) REFERENCES region(region_id);
+
+ALTER TABLE ONLY employee_territories
+    ADD CONSTRAINT fk_employee_territories_employees FOREIGN KEY (employee_id) REFERENCES employees(employee_id);
+
+ALTER TABLE ONLY employee_territories
+    ADD CONSTRAINT fk_employee_territories_territories FOREIGN KEY (territory_id) REFERENCES territories(territory_id);
+
+ALTER TABLE ONLY products
+    ADD CONSTRAINT fk_products_categories FOREIGN KEY (category_id) REFERENCES categories(category_id);
+
+ALTER TABLE ONLY products
+    ADD CONSTRAINT fk_products_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id);
+
+ALTER TABLE ONLY orders
+    ADD CONSTRAINT fk_orders_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+
+ALTER TABLE ONLY orders
+    ADD CONSTRAINT fk_orders_employees FOREIGN KEY (employee_id) REFERENCES employees(employee_id);
+
+ALTER TABLE ONLY orders
+    ADD CONSTRAINT fk_orders_shippers FOREIGN KEY (ship_via) REFERENCES shippers(shipper_id);
+
+ALTER TABLE ONLY order_details
+    ADD CONSTRAINT fk_order_details_orders FOREIGN KEY (order_id) REFERENCES orders(order_id);
+
+ALTER TABLE ONLY order_details
+    ADD CONSTRAINT fk_order_details_products FOREIGN KEY (product_id) REFERENCES products(product_id);
+
+-- Smitty service center FKs
+ALTER TABLE ONLY vehicles
+    ADD CONSTRAINT fk_vehicles_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+
+ALTER TABLE ONLY jobs
+    ADD CONSTRAINT fk_jobs_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id);
+
+ALTER TABLE ONLY jobs
+    ADD CONSTRAINT fk_jobs_vehicles FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id);
+
+ALTER TABLE ONLY purchases
+    ADD CONSTRAINT fk_purchases_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id);
+
+ALTER TABLE ONLY purchase_items
+    ADD CONSTRAINT fk_purchase_items_purchases FOREIGN KEY (purchase_id) REFERENCES purchases(purchase_id);
+
+ALTER TABLE ONLY purchase_items
+    ADD CONSTRAINT fk_purchase_items_products FOREIGN KEY (product_id) REFERENCES products(product_id);
+
+ALTER TABLE ONLY job_purchases
+    ADD CONSTRAINT fk_job_purchases_jobs FOREIGN KEY (job_id) REFERENCES jobs(job_id);
+
+ALTER TABLE ONLY job_purchases
+    ADD CONSTRAINT fk_job_purchases_purchases FOREIGN KEY (purchase_id) REFERENCES purchases(purchase_id);
+
+
+-- ==============================================================================
+-- Indexes
+-- ==============================================================================
+
+CREATE INDEX idx_vehicle_customer_id    ON vehicles(customer_id);
+CREATE INDEX idx_vehicle_vin            ON vehicles(vin);
+CREATE INDEX idx_job_customer_id        ON jobs(customer_id);
+CREATE INDEX idx_job_vehicle_id         ON jobs(vehicle_id);
+CREATE INDEX idx_job_status             ON jobs(status);
+CREATE INDEX idx_job_created_date       ON jobs(created_date);
+CREATE INDEX idx_purchase_supplier_id   ON purchases(supplier_id);
+CREATE INDEX idx_purchase_status        ON purchases(status);
+CREATE INDEX idx_purchase_item_product  ON purchase_items(product_id);
