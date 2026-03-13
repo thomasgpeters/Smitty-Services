@@ -6,6 +6,7 @@
 #include <Wt/WCheckBox.h>
 #include <Wt/WComboBox.h>
 #include <Wt/WPushButton.h>
+#include <Wt/WComboBox.h>
 #include <map>
 
 class ProductDetail : public EntityDetailView {
@@ -88,6 +89,66 @@ protected:
         auto saveBtn = saveBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
         saveBtn->setStyleClass("action-btn");
         saveBtn->clicked().connect(this, &ProductDetail::saveRecord);
+    }
+
+    bool customEditField(Wt::WContainerWidget* content, const ColumnDef& col,
+                          const std::string& value,
+                          std::map<std::string, Wt::WLineEdit*>& fieldMap) override {
+        if (col.name == "category_id") {
+            content->addWidget(std::make_unique<Wt::WText>("Category"))
+                   ->setStyleClass("dialog-label");
+            auto combo = content->addWidget(std::make_unique<Wt::WComboBox>());
+            combo->setStyleClass("dialog-input");
+            combo->addItem("");
+            int selectIdx = 0, idx = 1;
+            for (const auto& pair : categoryNames_) {
+                combo->addItem(pair.second);
+                if (pair.first == value) selectIdx = idx;
+                idx++;
+            }
+            combo->setCurrentIndex(selectIdx);
+            auto hidden = content->addWidget(std::make_unique<Wt::WLineEdit>());
+            hidden->setHidden(true);
+            hidden->setText(value);
+            fieldMap[col.name] = hidden;
+            combo->changed().connect([combo, hidden, this] {
+                std::string name = combo->currentText().toUTF8();
+                for (const auto& pair : categoryNames_) {
+                    if (pair.second == name) { hidden->setText(pair.first); return; }
+                }
+                hidden->setText("");
+            });
+            return true;
+        }
+
+        if (col.name == "supplier_id") {
+            content->addWidget(std::make_unique<Wt::WText>("Supplier"))
+                   ->setStyleClass("dialog-label");
+            auto combo = content->addWidget(std::make_unique<Wt::WComboBox>());
+            combo->setStyleClass("dialog-input");
+            combo->addItem("");
+            int selectIdx = 0, idx = 1;
+            for (const auto& pair : supplierNames_) {
+                combo->addItem(pair.second);
+                if (pair.first == value) selectIdx = idx;
+                idx++;
+            }
+            combo->setCurrentIndex(selectIdx);
+            auto hidden = content->addWidget(std::make_unique<Wt::WLineEdit>());
+            hidden->setHidden(true);
+            hidden->setText(value);
+            fieldMap[col.name] = hidden;
+            combo->changed().connect([combo, hidden, this] {
+                std::string name = combo->currentText().toUTF8();
+                for (const auto& pair : supplierNames_) {
+                    if (pair.second == name) { hidden->setText(pair.first); return; }
+                }
+                hidden->setText("");
+            });
+            return true;
+        }
+
+        return false;
     }
 
 private:
