@@ -382,17 +382,19 @@ body {
 
 .form-input {
     width: 100%;
+    font-size: 14px;
+    color: #3c4043;
     padding: 10px 14px;
-    border: 1.5px solid #e0e0e0;
+    background: #f8f9fb;
+    border: 1.5px solid #e8eaed;
     border-radius: 8px;
-    font-size: 13px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
-    background: #ffffff;
 }
 
 .form-input:focus {
     border-color: #4fc3f7;
+    background: #ffffff;
     box-shadow: 0 0 0 3px rgba(79,195,247,0.12);
 }
 
