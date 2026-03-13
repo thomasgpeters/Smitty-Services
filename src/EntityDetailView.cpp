@@ -22,22 +22,11 @@ void EntityDetailView::buildUI() {
         if (backCallback_) backCallback_();
     });
 
-    // Page header with action buttons
+    // Page header
     auto header = addWidget(std::make_unique<Wt::WContainerWidget>());
     header->setStyleClass("page-header");
     titleText_ = header->addWidget(std::make_unique<Wt::WText>(entity_->displayName() + " Detail"));
     titleText_->setStyleClass("page-title");
-
-    auto headerActions = header->addWidget(std::make_unique<Wt::WContainerWidget>());
-    headerActions->setStyleClass("action-buttons");
-
-    auto editBtn = headerActions->addWidget(std::make_unique<Wt::WPushButton>("Edit"));
-    editBtn->setStyleClass("action-btn");
-    editBtn->clicked().connect(this, &EntityDetailView::showEditDialog);
-
-    auto deleteBtn = headerActions->addWidget(std::make_unique<Wt::WPushButton>("Delete"));
-    deleteBtn->setStyleClass("action-btn action-btn-danger");
-    deleteBtn->clicked().connect(this, &EntityDetailView::confirmDelete);
 
     // Fields container (3-column grid)
     fieldsContainer_ = addWidget(std::make_unique<Wt::WContainerWidget>());

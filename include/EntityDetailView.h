@@ -24,7 +24,7 @@ public:
 
 protected:
     void buildUI();
-    void populateFields(const json& record);
+    virtual void populateFields(const json& record);
     virtual std::string formatFieldValue(const ColumnDef& col, const std::string& value);
 
     // CRUD hooks for subclasses
