@@ -103,6 +103,9 @@ workstations. Real-time data. One source of truth.
 | **Browser-Based Access** | No desktop software to install or maintain; works on any device |
 | **Extensible Architecture** | New entities, reports, and workflows can be added as your business grows |
 | **Professional Documents** | Generate invoices, POs, and statements as PDFs directly from the system |
+| **On-Premise Infrastructure** | TNAS server keeps data on your network -- no cloud hosting fees, no internet dependency for daily operations |
+| **Built-In File Server** | Replace USB drives and email attachments with organized, permissioned network shares |
+| **Automated Backups** | Nightly database snapshots, file versioning, and weekly full-system backup to external drive -- disaster recovery without the worry |
 
 ---
 
@@ -118,9 +121,140 @@ workstations. Real-time data. One source of truth.
 
 ---
 
+# Infrastructure: TerraMaster NAS Server
+
+To give Smitty a reliable, always-on platform for the application, file
+sharing, and data protection, we recommend deploying on a TerraMaster
+F4-424 Pro NAS server installed on-premise at your location.
+
+## Why a TNAS?
+
+- **All-in-one server:** Runs Smitty Services in Docker containers,
+  serves as your office file server, and handles automated backups --
+  one device, three critical roles
+- **No cloud dependency:** Your business data stays on your network,
+  under your control, with no recurring cloud hosting fees
+- **Enterprise-grade reliability:** Intel i3-N305 8-core CPU, 32GB DDR5
+  RAM, dual 2.5GbE networking -- far more power than needed, leaving
+  room to grow
+- **Docker Compose native:** TOS (TerraMaster OS) includes a built-in
+  Docker manager, purpose-built for running containerized applications
+  like Smitty Services
+- **Energy efficient:** Low-power design runs 24/7 at a fraction of the
+  cost of a traditional server
+
+## Deployment Architecture
+
+```
+ TerraMaster F4-424 Pro
+ +-------------------------------------------------+
+ |                                                 |
+ |  Docker Compose Platform                        |
+ |  +-------------------------------------------+  |
+ |  | PostgreSQL Database      (Tier 1)         |  |
+ |  | ApiLogicServer Backend   (Tier 2)         |  |
+ |  | Smitty Services Frontend (Tier 3)         |  |
+ |  +-------------------------------------------+  |
+ |                                                 |
+ |  File Server (SMB/CIFS Shares)                  |
+ |  +-------------------------------------------+  |
+ |  | Shared Documents & Business Files         |  |
+ |  | User Home Folders                         |  |
+ |  +-------------------------------------------+  |
+ |                                                 |
+ |  Automated Backup                               |
+ |  +-------------------------------------------+  |
+ |  | Nightly database snapshots                |  |
+ |  | File server versioned backups             |  |
+ |  | Optional off-site replication (USB/Cloud) |  |
+ |  +-------------------------------------------+  |
+ |                                                 |
+ |  Storage: RAID 1 Mirror (2x 4TB WD Red Plus)    |
+ |  Capacity: 4TB usable, fully redundant          |
+ +-------------------------------------------------+
+         |                    |
+     2.5GbE LAN          2.5GbE LAN
+         |                    |
+    Office Network     (failover/link agg)
+```
+
+## TNAS Specifications
+
+| Component | Detail |
+|-----------|--------|
+| **Model** | TerraMaster F4-424 Pro |
+| **CPU** | Intel Core i3-N305, 8-core / 8-thread, up to 3.8 GHz |
+| **RAM** | 32 GB DDR5 4800 MHz |
+| **Drive Bays** | 4x 3.5" SATA + 2x M.2 NVMe (SSD cache) |
+| **Network** | 2x 2.5 Gigabit Ethernet |
+| **OS** | TOS (TerraMaster OS) with Docker Manager |
+| **Form Factor** | Compact desktop tower |
+
+## Storage Plan
+
+| Drive | Purpose | Configuration |
+|-------|---------|---------------|
+| **Bay 1:** WD Red Plus 4TB | Primary data | RAID 1 (mirror) |
+| **Bay 2:** WD Red Plus 4TB | Mirror copy | RAID 1 (mirror) |
+| **Bay 3-4:** | Available for future expansion | -- |
+
+RAID 1 mirroring means every byte is written to both drives
+simultaneously. If either drive fails, the system continues running
+on the surviving drive with zero data loss.
+
+**Usable capacity:** 4 TB (documents, database, backups)
+
+## File Server
+
+The TNAS replaces any existing file-sharing workarounds (USB drives,
+email attachments, local folders) with a proper network file server:
+
+- **Shared folders** accessible from any PC on the network (Windows,
+  Mac, Linux)
+- **User-level permissions** to control who can read, write, or
+  administer each folder
+- **Recycle bin** protection against accidental deletion
+- **Access from anywhere** via TerraMaster's secure remote access
+  (TNAS.online) when needed
+
+## Backup Plan
+
+| What | How | When |
+|------|-----|------|
+| **Smitty Services Database** | Automated PostgreSQL dump to local backup folder | Nightly at 2:00 AM |
+| **Docker Volumes** | Snapshot of all container data | Nightly at 2:30 AM |
+| **Shared Files** | Versioned backup with 7-day retention | Nightly at 3:00 AM |
+| **Full System Backup** | Complete TNAS backup to external USB drive | Weekly (Sunday 1:00 AM) |
+| **Off-Site Copy (optional)** | Encrypted replication to cloud storage or second location | Configurable |
+
+- Database backups are retained for 30 days (rolling)
+- File versioning lets you recover accidentally deleted or overwritten
+  files from the past 7 days
+- External USB drive provides disaster recovery in case of hardware
+  failure, theft, or fire
+- All backups run automatically with no manual intervention required
+
+---
+
 # Pricing Schedule
 
-## First-Year Investment: $3,000.00
+## Hardware Investment (One-Time)
+
+| Item | Est. Cost |
+|------|-----------|
+| **TerraMaster F4-424 Pro** (4-bay, diskless) | $700.00 |
+| **WD Red Plus 4TB NAS Drive** x 2 (RAID 1) | $200.00 |
+| **Ethernet Cable / Accessories** | $25.00 |
+| | |
+| **Total Hardware** | **$925.00** |
+
+*Hardware is purchased directly by the client. Imagery Business Systems
+will specify exact models and can assist with ordering. Prices are
+estimated and subject to current retail availability.*
+
+---
+
+## First-Year Software & Services: $3,000.00
 
 | Item | Amount | When Due |
 |------|--------|----------|
@@ -153,9 +287,12 @@ workstations. Real-time data. One source of truth.
 - Development environment setup
 
 ### Installation & Configuration ($300.00)
-- Application deployment to your environment
+- TNAS server hardware setup and RAID configuration
+- Docker Compose deployment of all three application tiers
 - Database setup and initial data migration
-- User account configuration
+- File server shared folders and user permissions
+- Automated backup schedule configuration
+- Network integration and connectivity testing
 - System testing and verification
 - Hands-on training session for your team
 
@@ -164,7 +301,22 @@ workstations. Real-time data. One source of truth.
 - Bug fixes and security patches
 - Email and phone support during business hours
 - Minor enhancements and configuration adjustments
-- Data backups and system monitoring
+- Automated nightly database and file backups
+- TNAS system health monitoring and alerts
+- Backup verification and recovery testing (quarterly)
+
+---
+
+## Total First-Year Investment Summary
+
+| Category | Amount |
+|----------|--------|
+| Hardware (TNAS + Drives, purchased by client) | $925.00 |
+| Software & Services (deposit + install + 12 months) | $3,000.00 |
+| **Total First-Year Investment** | **$3,925.00** |
+
+*After year one, ongoing cost is the monthly subscription only --
+no hardware costs, no per-user fees, no cloud hosting bills.*
 
 ---
 
@@ -180,10 +332,12 @@ written notice.
 
 | Phase | Duration | Activities |
 |-------|----------|------------|
-| **Kickoff** | Week 1 | Requirements review, project plan, deposit due |
-| **Setup** | Week 2-3 | Environment provisioning, data migration planning |
-| **Deployment** | Week 3-4 | Application install, configuration, install fee due |
-| **Training** | Week 4 | User training, workflow walkthrough, Q&A |
+| **Kickoff** | Week 1 | Requirements review, project plan, deposit due, hardware ordered |
+| **Hardware Setup** | Week 2 | TNAS unboxing, drive install, RAID config, TOS setup |
+| **Server Config** | Week 2-3 | Docker Compose deployment, file shares, backup schedules |
+| **Data Migration** | Week 3 | Database setup, initial data import, install fee due |
+| **Testing** | Week 3-4 | End-to-end system testing, backup/restore verification |
+| **Training** | Week 4 | User training: application, file server, backup recovery |
 | **Go Live** | Week 5 | Production launch, subscription billing begins |
 
 ---
