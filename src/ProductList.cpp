@@ -230,16 +230,24 @@ private:
         auto content = dialog->contents();
         content->setStyleClass("dialog-content");
 
-        // Product Name
-        content->addWidget(std::make_unique<Wt::WText>("Product Name"))
+        // 3-column grid for fields
+        auto grid = content->addWidget(std::make_unique<Wt::WContainerWidget>());
+        grid->setStyleClass("dialog-content-grid");
+
+        // Product Name (required)
+        auto nameGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        nameGroup->setStyleClass("dialog-field-group");
+        nameGroup->addWidget(std::make_unique<Wt::WText>("Product Name"))
                ->setStyleClass("dialog-label");
-        auto nameInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto nameInput = nameGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         nameInput->setStyleClass("dialog-input");
 
         // Category dropdown
-        content->addWidget(std::make_unique<Wt::WText>("Category"))
+        auto catGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        catGroup->setStyleClass("dialog-field-group");
+        catGroup->addWidget(std::make_unique<Wt::WText>("Category"))
                ->setStyleClass("dialog-label");
-        auto catCombo = content->addWidget(std::make_unique<Wt::WComboBox>());
+        auto catCombo = catGroup->addWidget(std::make_unique<Wt::WComboBox>());
         catCombo->setStyleClass("dialog-input");
         catCombo->addItem("");
         for (const auto& pair : categoryNames_) {
@@ -247,42 +255,44 @@ private:
         }
 
         // Supplier dropdown
-        content->addWidget(std::make_unique<Wt::WText>("Supplier"))
+        auto supGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        supGroup->setStyleClass("dialog-field-group");
+        supGroup->addWidget(std::make_unique<Wt::WText>("Supplier"))
                ->setStyleClass("dialog-label");
-        auto supCombo = content->addWidget(std::make_unique<Wt::WComboBox>());
+        auto supCombo = supGroup->addWidget(std::make_unique<Wt::WComboBox>());
         supCombo->setStyleClass("dialog-input");
         supCombo->addItem("");
         for (const auto& pair : supplierNames_) {
             supCombo->addItem(pair.second);
         }
 
-        // Qty Per Unit
-        content->addWidget(std::make_unique<Wt::WText>("Qty Per Unit"))
-               ->setStyleClass("dialog-label");
-        auto qtyInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        qtyInput->setStyleClass("dialog-input");
-
         // Unit Price
-        content->addWidget(std::make_unique<Wt::WText>("Unit Price"))
+        auto priceGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        priceGroup->setStyleClass("dialog-field-group");
+        priceGroup->addWidget(std::make_unique<Wt::WText>("Unit Price"))
                ->setStyleClass("dialog-label");
-        auto priceInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto priceInput = priceGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         priceInput->setStyleClass("dialog-input");
 
         // Units In Stock
-        content->addWidget(std::make_unique<Wt::WText>("Units In Stock"))
+        auto stockGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        stockGroup->setStyleClass("dialog-field-group");
+        stockGroup->addWidget(std::make_unique<Wt::WText>("Units In Stock"))
                ->setStyleClass("dialog-label");
-        auto stockInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto stockInput = stockGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         stockInput->setStyleClass("dialog-input");
         stockInput->setText("0");
 
-        // Reorder Level
-        content->addWidget(std::make_unique<Wt::WText>("Reorder Level"))
+        // Discontinued
+        auto discGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        discGroup->setStyleClass("dialog-field-group");
+        discGroup->addWidget(std::make_unique<Wt::WText>("Discontinued"))
                ->setStyleClass("dialog-label");
-        auto reorderInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        reorderInput->setStyleClass("dialog-input");
-        reorderInput->setText("0");
+        auto discInput = discGroup->addWidget(std::make_unique<Wt::WLineEdit>());
+        discInput->setStyleClass("dialog-input");
+        discInput->setText("0");
 
-        // Status message
+        // Status message (full width, below grid)
         auto statusMsg = content->addWidget(std::make_unique<Wt::WText>());
         statusMsg->setStyleClass("dialog-status");
 
@@ -290,7 +300,7 @@ private:
         auto btnBar = content->addWidget(std::make_unique<Wt::WContainerWidget>());
         btnBar->setStyleClass("dialog-buttons");
 
-        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
+        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Add Product"));
         saveBtn->setStyleClass("action-btn");
 
         saveBtn->clicked().connect([=] {
@@ -301,13 +311,14 @@ private:
 
             json attrs;
             attrs["product_name"] = nameInput->text().toUTF8();
-            attrs["quantity_per_unit"] = qtyInput->text().toUTF8();
-            attrs["units_in_stock"] = stockInput->text().empty() ? 0 : std::stoi(stockInput->text().toUTF8());
-            attrs["reorder_level"] = reorderInput->text().empty() ? 0 : std::stoi(reorderInput->text().toUTF8());
-            attrs["discontinued"] = 0;
+            attrs["discontinued"] = discInput->text().empty() ? 0 : std::stoi(discInput->text().toUTF8());
 
             if (!priceInput->text().empty()) {
                 try { attrs["unit_price"] = std::stod(priceInput->text().toUTF8()); }
+                catch (...) {}
+            }
+            if (!stockInput->text().empty()) {
+                try { attrs["units_in_stock"] = std::stoi(stockInput->text().toUTF8()); }
                 catch (...) {}
             }
 

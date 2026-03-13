@@ -9,20 +9,8 @@
 #include <Wt/WPushButton.h>
 #include <Wt/WComboBox.h>
 #include <Wt/WText.h>
-#include <Wt/WAnchor.h>
-#include <Wt/WTable.h>
 #include <Wt/WContainerWidget.h>
 #include <map>
-#include <vector>
-#include <algorithm>
-
-struct ProductInfo {
-    std::string id;
-    std::string name;
-    std::string categoryId;
-    std::string supplierId;
-    double unitPrice = 0.0;
-};
 
 class OrderList : public EntityListView {
 public:
@@ -191,72 +179,6 @@ private:
             }
         } catch (...) {}
 
-        // Load products for order lines
-        try {
-            auto resp = ApiClient::instance().fetchAll("Product");
-            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
-                for (const auto& prod : resp.data()) {
-                    ProductInfo pi;
-                    pi.id = prod.contains("id")
-                        ? (prod["id"].is_string() ? prod["id"].get<std::string>() : prod["id"].dump())
-                        : "";
-                    if (prod.contains("attributes")) {
-                        const auto& attrs = prod["attributes"];
-                        if (attrs.contains("product_name") && !attrs["product_name"].is_null())
-                            pi.name = attrs["product_name"].get<std::string>();
-                        if (attrs.contains("unit_price") && !attrs["unit_price"].is_null()) {
-                            try { pi.unitPrice = attrs["unit_price"].get<double>(); }
-                            catch (...) {}
-                        }
-                        if (attrs.contains("category_id") && !attrs["category_id"].is_null())
-                            pi.categoryId = attrs["category_id"].is_string()
-                                ? attrs["category_id"].get<std::string>()
-                                : attrs["category_id"].dump();
-                        if (attrs.contains("supplier_id") && !attrs["supplier_id"].is_null())
-                            pi.supplierId = attrs["supplier_id"].is_string()
-                                ? attrs["supplier_id"].get<std::string>()
-                                : attrs["supplier_id"].dump();
-                    }
-                    if (!pi.id.empty() && !pi.name.empty()) {
-                        products_.push_back(pi);
-                    }
-                }
-            }
-        } catch (...) {}
-
-        // Load categories for line item filters
-        try {
-            auto resp = ApiClient::instance().fetchAll("Category");
-            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
-                for (const auto& cat : resp.data()) {
-                    std::string id = cat.contains("id")
-                        ? (cat["id"].is_string() ? cat["id"].get<std::string>() : cat["id"].dump())
-                        : "";
-                    std::string name;
-                    if (cat.contains("attributes") && cat["attributes"].contains("category_name"))
-                        name = cat["attributes"]["category_name"].get<std::string>();
-                    if (!id.empty() && !name.empty())
-                        categoryNames_[id] = name;
-                }
-            }
-        } catch (...) {}
-
-        // Load suppliers for line item filters
-        try {
-            auto resp = ApiClient::instance().fetchAll("Supplier");
-            if (resp.ok() && resp.hasData() && resp.data().is_array()) {
-                for (const auto& sup : resp.data()) {
-                    std::string id = sup.contains("id")
-                        ? (sup["id"].is_string() ? sup["id"].get<std::string>() : sup["id"].dump())
-                        : "";
-                    std::string name;
-                    if (sup.contains("attributes") && sup["attributes"].contains("company_name"))
-                        name = sup["attributes"]["company_name"].get<std::string>();
-                    if (!id.empty() && !name.empty())
-                        supplierNames_[id] = name;
-                }
-            }
-        } catch (...) {}
     }
 
     std::string getCustomerIdFromRecord(const json& record) const {
@@ -388,39 +310,9 @@ private:
         dialog->show();
     }
 
-    // Rebuild the product combo based on selected category/supplier filters
-    void rebuildProductCombo(Wt::WComboBox* productCombo,
-                             Wt::WComboBox* catFilter,
-                             Wt::WComboBox* supFilter) {
-        productCombo->clear();
-        productCombo->addItem("");
-
-        std::string selectedCat;
-        if (catFilter->currentIndex() > 0) {
-            std::string catName = catFilter->currentText().toUTF8();
-            for (const auto& pair : categoryNames_) {
-                if (pair.second == catName) { selectedCat = pair.first; break; }
-            }
-        }
-
-        std::string selectedSup;
-        if (supFilter->currentIndex() > 0) {
-            std::string supName = supFilter->currentText().toUTF8();
-            for (const auto& pair : supplierNames_) {
-                if (pair.second == supName) { selectedSup = pair.first; break; }
-            }
-        }
-
-        for (const auto& prod : products_) {
-            if (!selectedCat.empty() && prod.categoryId != selectedCat) continue;
-            if (!selectedSup.empty() && prod.supplierId != selectedSup) continue;
-            productCombo->addItem(prod.name);
-        }
-    }
-
     void showAddOrderDialog() {
-        auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Invoice"));
-        dialog->setStyleClass("smitty-dialog smitty-dialog-wide");
+        auto dialog = addChild(std::make_unique<Wt::WDialog>("Add Order"));
+        dialog->setStyleClass("smitty-dialog");
         dialog->setModal(true);
         dialog->setClosable(true);
         dialog->rejectWhenEscapePressed(true);
@@ -428,193 +320,65 @@ private:
         auto content = dialog->contents();
         content->setStyleClass("dialog-content");
 
-        // Customer dropdown
-        content->addWidget(std::make_unique<Wt::WText>("Customer"))
+        // 3-column grid for fields
+        auto grid = content->addWidget(std::make_unique<Wt::WContainerWidget>());
+        grid->setStyleClass("dialog-content-grid");
+
+        // Customer (required)
+        auto custGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        custGroup->setStyleClass("dialog-field-group");
+        custGroup->addWidget(std::make_unique<Wt::WText>("Customer"))
                ->setStyleClass("dialog-label");
-        auto custCombo = content->addWidget(std::make_unique<Wt::WComboBox>());
+        auto custCombo = custGroup->addWidget(std::make_unique<Wt::WComboBox>());
         custCombo->setStyleClass("dialog-input");
         custCombo->addItem("");
         for (const auto& pair : customerNames_) {
             custCombo->addItem(pair.second);
         }
 
-        // Ship Name
-        content->addWidget(std::make_unique<Wt::WText>("Ship Name"))
+        // Invoice Date
+        auto dateGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        dateGroup->setStyleClass("dialog-field-group");
+        dateGroup->addWidget(std::make_unique<Wt::WText>("Invoice Date"))
                ->setStyleClass("dialog-label");
-        auto shipNameInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        shipNameInput->setStyleClass("dialog-input");
-
-        // Order Date
-        content->addWidget(std::make_unique<Wt::WText>("Invoice Date"))
-               ->setStyleClass("dialog-label");
-        auto orderDateInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto orderDateInput = dateGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         orderDateInput->setStyleClass("dialog-input");
         orderDateInput->setPlaceholderText("YYYY-MM-DD");
 
-        // Required Date
-        content->addWidget(std::make_unique<Wt::WText>("Required Date"))
+        // Ship Name
+        auto shipGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        shipGroup->setStyleClass("dialog-field-group");
+        shipGroup->addWidget(std::make_unique<Wt::WText>("Ship Name"))
                ->setStyleClass("dialog-label");
-        auto reqDateInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        reqDateInput->setStyleClass("dialog-input");
-        reqDateInput->setPlaceholderText("YYYY-MM-DD");
-
-        // Ship Address
-        content->addWidget(std::make_unique<Wt::WText>("Ship Address"))
-               ->setStyleClass("dialog-label");
-        auto shipAddrInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
-        shipAddrInput->setStyleClass("dialog-input");
+        auto shipNameInput = shipGroup->addWidget(std::make_unique<Wt::WLineEdit>());
+        shipNameInput->setStyleClass("dialog-input");
 
         // Ship City
-        content->addWidget(std::make_unique<Wt::WText>("Ship City"))
+        auto cityGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        cityGroup->setStyleClass("dialog-field-group");
+        cityGroup->addWidget(std::make_unique<Wt::WText>("Ship City"))
                ->setStyleClass("dialog-label");
-        auto shipCityInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto shipCityInput = cityGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         shipCityInput->setStyleClass("dialog-input");
 
         // Ship Country
-        content->addWidget(std::make_unique<Wt::WText>("Ship Country"))
+        auto countryGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        countryGroup->setStyleClass("dialog-field-group");
+        countryGroup->addWidget(std::make_unique<Wt::WText>("Ship Country"))
                ->setStyleClass("dialog-label");
-        auto shipCountryInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto shipCountryInput = countryGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         shipCountryInput->setStyleClass("dialog-input");
 
         // Freight
-        content->addWidget(std::make_unique<Wt::WText>("Freight"))
+        auto freightGroup = grid->addWidget(std::make_unique<Wt::WContainerWidget>());
+        freightGroup->setStyleClass("dialog-field-group");
+        freightGroup->addWidget(std::make_unique<Wt::WText>("Freight"))
                ->setStyleClass("dialog-label");
-        auto freightInput = content->addWidget(std::make_unique<Wt::WLineEdit>());
+        auto freightInput = freightGroup->addWidget(std::make_unique<Wt::WLineEdit>());
         freightInput->setStyleClass("dialog-input");
         freightInput->setText("0.00");
 
-        // ===== ORDER LINES SECTION =====
-        auto linesSection = content->addWidget(std::make_unique<Wt::WContainerWidget>());
-        linesSection->setStyleClass("order-lines-section");
-
-        // Header with title and Add Line button
-        auto linesHeader = linesSection->addWidget(std::make_unique<Wt::WContainerWidget>());
-        linesHeader->setStyleClass("order-lines-header");
-        linesHeader->addWidget(std::make_unique<Wt::WText>("Invoice Lines"))
-                   ->setStyleClass("order-lines-title");
-        auto addLineBtn = linesHeader->addWidget(std::make_unique<Wt::WPushButton>("+ Add Line"));
-        addLineBtn->setStyleClass("order-lines-add-btn");
-
-        // Category / Supplier filter row
-        auto filterRow = linesSection->addWidget(std::make_unique<Wt::WContainerWidget>());
-        filterRow->setStyleClass("order-lines-filters");
-
-        auto catFilterCombo = filterRow->addWidget(std::make_unique<Wt::WComboBox>());
-        catFilterCombo->setStyleClass("order-lines-filter-combo");
-        catFilterCombo->addItem("All Categories");
-        for (const auto& pair : categoryNames_) {
-            catFilterCombo->addItem(pair.second);
-        }
-
-        auto supFilterCombo = filterRow->addWidget(std::make_unique<Wt::WComboBox>());
-        supFilterCombo->setStyleClass("order-lines-filter-combo");
-        supFilterCombo->addItem("All Suppliers");
-        for (const auto& pair : supplierNames_) {
-            supFilterCombo->addItem(pair.second);
-        }
-
-        // Lines table
-        auto linesTable = linesSection->addWidget(std::make_unique<Wt::WTable>());
-        linesTable->setStyleClass("order-lines-table");
-        linesTable->setHeaderCount(1);
-        linesTable->elementAt(0, 0)->addWidget(std::make_unique<Wt::WText>("Product"));
-        linesTable->elementAt(0, 1)->addWidget(std::make_unique<Wt::WText>("Unit Price"));
-        linesTable->elementAt(0, 2)->addWidget(std::make_unique<Wt::WText>("Qty"));
-        linesTable->elementAt(0, 3)->addWidget(std::make_unique<Wt::WText>("Discount"));
-        linesTable->elementAt(0, 4)->addWidget(std::make_unique<Wt::WText>(""));
-
-        // Shared line row data structures
-        struct LineRow {
-            Wt::WComboBox* productCombo;
-            Wt::WLineEdit* priceInput;
-            Wt::WLineEdit* qtyInput;
-            Wt::WLineEdit* discountInput;
-            int tableRow;
-        };
-        auto lineRows = std::make_shared<std::vector<LineRow>>();
-
-        // Lambda to add a line row
-        auto addLineRow = [this, linesTable, lineRows, catFilterCombo, supFilterCombo]() {
-            int row = linesTable->rowCount();
-
-            auto productCombo = linesTable->elementAt(row, 0)->addWidget(
-                std::make_unique<Wt::WComboBox>());
-            productCombo->setStyleClass("line-combo");
-            rebuildProductCombo(productCombo, catFilterCombo, supFilterCombo);
-
-            auto priceInput = linesTable->elementAt(row, 1)->addWidget(
-                std::make_unique<Wt::WLineEdit>());
-            priceInput->setStyleClass("line-input");
-            priceInput->setText("0.00");
-
-            auto qtyInput = linesTable->elementAt(row, 2)->addWidget(
-                std::make_unique<Wt::WLineEdit>());
-            qtyInput->setStyleClass("line-input");
-            qtyInput->setText("1");
-
-            auto discountInput = linesTable->elementAt(row, 3)->addWidget(
-                std::make_unique<Wt::WLineEdit>());
-            discountInput->setStyleClass("line-input");
-            discountInput->setText("0");
-
-            auto removeBtn = linesTable->elementAt(row, 4)->addWidget(
-                std::make_unique<Wt::WPushButton>("×"));
-            removeBtn->setStyleClass("line-remove-btn");
-
-            LineRow lr{productCombo, priceInput, qtyInput, discountInput, row};
-            lineRows->push_back(lr);
-
-            // Auto-fill unit price when product changes
-            productCombo->changed().connect([this, productCombo, priceInput] {
-                std::string prodName = productCombo->currentText().toUTF8();
-                for (const auto& prod : products_) {
-                    if (prod.name == prodName) {
-                        char buf[32];
-                        snprintf(buf, sizeof(buf), "%.2f", prod.unitPrice);
-                        priceInput->setText(buf);
-                        break;
-                    }
-                }
-            });
-
-            // Remove row
-            removeBtn->clicked().connect([linesTable, lineRows, row] {
-                // Hide the row instead of deleting (simpler with Wt tables)
-                for (int c = 0; c < 5; c++) {
-                    linesTable->elementAt(row, c)->hide();
-                }
-                // Mark as removed by clearing the product combo
-                for (auto& lr : *lineRows) {
-                    if (lr.tableRow == row) {
-                        lr.productCombo = nullptr;
-                        break;
-                    }
-                }
-            });
-        };
-
-        addLineBtn->clicked().connect(addLineRow);
-
-        // When category or supplier filter changes, rebuild product combos in all visible rows
-        auto rebuildAllProductCombos = [this, lineRows, catFilterCombo, supFilterCombo] {
-            for (auto& lr : *lineRows) {
-                if (lr.productCombo) {
-                    std::string currentSelection = lr.productCombo->currentText().toUTF8();
-                    rebuildProductCombo(lr.productCombo, catFilterCombo, supFilterCombo);
-                    // Try to restore selection
-                    for (int i = 0; i < lr.productCombo->count(); i++) {
-                        if (lr.productCombo->itemText(i).toUTF8() == currentSelection) {
-                            lr.productCombo->setCurrentIndex(i);
-                            break;
-                        }
-                    }
-                }
-            }
-        };
-        catFilterCombo->changed().connect(rebuildAllProductCombos);
-        supFilterCombo->changed().connect(rebuildAllProductCombos);
-
-        // Status message
+        // Status message (full width, below grid)
         auto statusMsg = content->addWidget(std::make_unique<Wt::WText>());
         statusMsg->setStyleClass("dialog-status");
 
@@ -622,7 +386,7 @@ private:
         auto btnBar = content->addWidget(std::make_unique<Wt::WContainerWidget>());
         btnBar->setStyleClass("dialog-buttons");
 
-        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Save"));
+        auto saveBtn = btnBar->addWidget(std::make_unique<Wt::WPushButton>("Add Order"));
         saveBtn->setStyleClass("action-btn");
 
         saveBtn->clicked().connect([=] {
@@ -641,14 +405,10 @@ private:
                 }
             }
 
-            if (!shipNameInput->text().empty())
-                attrs["ship_name"] = shipNameInput->text().toUTF8();
             if (!orderDateInput->text().empty())
                 attrs["order_date"] = orderDateInput->text().toUTF8();
-            if (!reqDateInput->text().empty())
-                attrs["required_date"] = reqDateInput->text().toUTF8();
-            if (!shipAddrInput->text().empty())
-                attrs["ship_address"] = shipAddrInput->text().toUTF8();
+            if (!shipNameInput->text().empty())
+                attrs["ship_name"] = shipNameInput->text().toUTF8();
             if (!shipCityInput->text().empty())
                 attrs["ship_city"] = shipCityInput->text().toUTF8();
             if (!shipCountryInput->text().empty())
@@ -662,57 +422,6 @@ private:
             try {
                 auto resp = ApiClient::instance().createRecord("Order", attrs);
                 if (resp.ok()) {
-                    // Get new order ID from response
-                    std::string newOrderId;
-                    if (resp.hasData()) {
-                        const auto& data = resp.data();
-                        if (data.contains("id")) {
-                            newOrderId = data["id"].is_string()
-                                ? data["id"].get<std::string>()
-                                : data["id"].dump();
-                        }
-                    }
-
-                    // Save each order line
-                    if (!newOrderId.empty()) {
-                        for (const auto& lr : *lineRows) {
-                            if (!lr.productCombo) continue; // removed row
-                            std::string prodName = lr.productCombo->currentText().toUTF8();
-                            if (prodName.empty()) continue;
-
-                            // Find product ID
-                            std::string productId;
-                            for (const auto& prod : products_) {
-                                if (prod.name == prodName) {
-                                    productId = prod.id;
-                                    break;
-                                }
-                            }
-                            if (productId.empty()) continue;
-
-                            json lineAttrs;
-                            try { lineAttrs["order_id"] = std::stoi(newOrderId); }
-                            catch (...) { lineAttrs["order_id"] = newOrderId; }
-                            try { lineAttrs["product_id"] = std::stoi(productId); }
-                            catch (...) { lineAttrs["product_id"] = productId; }
-
-                            if (!lr.priceInput->text().empty()) {
-                                try { lineAttrs["unit_price"] = std::stod(lr.priceInput->text().toUTF8()); }
-                                catch (...) { lineAttrs["unit_price"] = 0.0; }
-                            }
-                            if (!lr.qtyInput->text().empty()) {
-                                try { lineAttrs["quantity"] = std::stoi(lr.qtyInput->text().toUTF8()); }
-                                catch (...) { lineAttrs["quantity"] = 1; }
-                            }
-                            if (!lr.discountInput->text().empty()) {
-                                try { lineAttrs["discount"] = std::stod(lr.discountInput->text().toUTF8()); }
-                                catch (...) { lineAttrs["discount"] = 0.0; }
-                            }
-
-                            ApiClient::instance().createRecord("OrderDetail", lineAttrs);
-                        }
-                    }
-
                     dialog->accept();
                     refresh();
                 } else {
@@ -735,9 +444,6 @@ private:
     Wt::WComboBox* employeeFilterCombo_ = nullptr;
     std::map<std::string, std::string> customerNames_;
     std::map<std::string, std::string> employeeNames_;
-    std::map<std::string, std::string> categoryNames_;
-    std::map<std::string, std::string> supplierNames_;
-    std::vector<ProductInfo> products_;
 };
 
 std::unique_ptr<EntityListView> createOrderList() {
