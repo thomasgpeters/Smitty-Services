@@ -238,19 +238,18 @@ email attachments, local folders) with a proper network file server:
 
 # Pricing Schedule
 
-## Hardware Investment (One-Time)
+## Hardware Investment (One-Time, Sold by Imagery Business Systems)
 
-| Item | Est. Cost |
-|------|-----------|
-| **TerraMaster F4-424 Pro** (4-bay, diskless) | $700.00 |
-| **WD Red Plus 4TB NAS Drive** x 2 (RAID 1) | $200.00 |
-| **Ethernet Cable / Accessories** | $25.00 |
-| | |
-| **Total Hardware** | **$925.00** |
+| Item | Qty | Unit Price | Ext. Price |
+|------|-----|-----------|------------|
+| **TerraMaster F4-424 Pro** 4-Bay NAS (diskless) | 1 | $699.00 | $699.00 |
+| **WD Red Plus 4TB** NAS Drive (WD40EFPX) | 2 | $105.00 | $210.00 |
+| **Cat6 Ethernet Cable** / Accessories | 1 | $25.00 | $25.00 |
+| | | | |
+| **Total Hardware** | | | **$934.00** |
 
-*Hardware is purchased directly by the client. Imagery Business Systems
-will specify exact models and can assist with ordering. Prices are
-estimated and subject to current retail availability.*
+*Hardware is in stock and available from Imagery Business Systems.
+Prices reflect current retail and are subject to change.*
 
 ---
 
@@ -311,9 +310,9 @@ estimated and subject to current retail availability.*
 
 | Category | Amount |
 |----------|--------|
-| Hardware (TNAS + Drives, purchased by client) | $925.00 |
+| Hardware (TNAS + Drives, from Imagery) | $934.00 |
 | Software & Services (deposit + install + 12 months) | $3,000.00 |
-| **Total First-Year Investment** | **$3,925.00** |
+| **Total First-Year Investment** | **$3,934.00** |
 
 *After year one, ongoing cost is the monthly subscription only --
 no hardware costs, no per-user fees, no cloud hosting bills.*
