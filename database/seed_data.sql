@@ -1,3 +1,14 @@
+-- ==============================================================================
+-- Smitty Services — Seed Data (Northwind dataset)
+-- ==============================================================================
+-- Safe to re-run: truncates all seeded tables before inserting.
+-- ==============================================================================
+
+TRUNCATE TABLE order_details, orders, products, categories, suppliers,
+               shippers, employee_territories, employees, territories,
+               region, customer_customer_demo, customer_demographics,
+               customers, us_states
+    CASCADE;
 
 --
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
